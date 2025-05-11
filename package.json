@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.31.2",
     "@clerk/react-router": "^1.4.2",
+    "@supabase/supabase-js": "^2.49.4",
     "@types/react-router-dom": "^5.3.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
