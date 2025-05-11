@@ -1,0 +1,198 @@
+.dashboard {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard h2 {
+    color: #1a1a1a;
+    margin: 0 0 2.5rem 0;
+    font-size: 2.25rem;
+    font-weight: 700;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+    width: 100%;
+}
+
+.dashboard h2:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #646cff, #535bf2);
+    border-radius: 2px;
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilos base para todas las tarjetas */
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Borde lateral de la tarjeta */
+.dashboard-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #646cff;
+}
+
+/* Efecto hover para las tarjetas */
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(100, 108, 255, 0.1);
+}
+
+/* Estilos para los títulos de las tarjetas */
+.dashboard-card h3 {
+    color: #1a1a1a;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.dashboard-card h3:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #646cff;
+    border-radius: 2px;
+}
+
+/* Estilos para el párrafo dentro de las tarjetas */
+.dashboard-card p {
+    color: #4a4a4a;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+/* Estilos para el texto en negrita */
+.dashboard-card strong {
+    color: #1a1a1a;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Estilos específicos para la tarjeta de bienvenida */
+.welcome-card {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+    border-color: #e0e5ff;
+}
+
+.welcome-card h3 {
+    margin-bottom: 1rem;
+}
+
+.welcome-card .last-login {
+    margin-top: auto;
+    padding-top: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Estilos para los elementos de información */
+.info-item {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.info-item p {
+    margin: 0.25rem 0 0 0;
+    color: #1a1a1a;
+    font-size: 1.05rem;
+}
+
+/* Estilos para los botones de acción */
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.action-button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.action-button.primary {
+    background: #646cff;
+    color: white;
+}
+
+.action-button.primary:hover {
+    background: #535bf2;
+    transform: translateY(-2px);
+}
+
+.action-button.secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.action-button.secondary:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+/* Texto de "próximamente" */
+.coming-soon {
+    font-size: 0.9rem;
+    color: #888;
+    text-align: center;
+    margin: 0.5rem 0 0 0;
+}
