@@ -105,3 +105,53 @@ pnpm dev
 
 ### Supabase
 - `npm run supabase:restart` - (alternativa cómoda) Reinicia la instancia de Supabase
+
+## Migraciones de Base de Datos con Supabase
+
+### Crear una nueva migración
+
+Para crear una nueva migración, ejecuta:
+```bash
+npx supabase migration new nombre_de_la_migracion
+```
+Esto generará un archivo SQL en la carpeta `supabase/migrations/`.
+
+### Aplicar migraciones en local
+
+Asegúrate de que Supabase local esté corriendo:
+```bash
+npx supabase start
+```
+
+Para aplicar solo las migraciones pendientes en tu entorno local:
+```bash
+npx supabase migration up
+```
+
+Si necesitas borrar la base de datos local y volver a aplicar todas las migraciones desde cero (útil para desarrollo):
+```bash
+npx supabase db reset
+```
+Esto recreará la base de datos local y aplicará todas las migraciones desde el principio.
+
+### Subir migraciones a la instancia en la nube
+
+Para subir migraciones a tu instancia de Supabase en la nube, sigue estos pasos:
+
+1. **Haz login en Supabase CLI** (solo la primera vez o si cambias de cuenta):
+```bash
+npx supabase login
+```
+
+2. **Vincula tu proyecto local con tu proyecto en la nube** (solo la primera vez en este repositorio o si cambias de proyecto):
+```bash
+npx supabase link
+```
+Esto te pedirá el `project-ref`, que puedes ver en la URL del panel de Supabase.
+
+3. **Sube las migraciones pendientes a la base de datos en la nube:**
+```bash
+npx supabase db push
+```
+
+Más información en la [documentación oficial de Supabase](https://supabase.com/docs/guides/database/migrations).
