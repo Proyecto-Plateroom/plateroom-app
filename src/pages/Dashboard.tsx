@@ -1,5 +1,4 @@
 import { useUser } from '@clerk/clerk-react';
-import './Dashboard.css';
 
 function Dashboard() {
     const { user } = useUser();

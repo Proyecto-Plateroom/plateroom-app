@@ -1,5 +1,4 @@
 import { SignedIn, SignedOut } from '@clerk/clerk-react';
-import './Home.css';
 
 function Home() {
     return (
