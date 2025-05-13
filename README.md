@@ -51,25 +51,25 @@ pnpm install
    **Primera vez que configuras Supabase localmente:**
    ```bash
    # Inicializa la configuración de Supabase (solo primera vez)
-   npm run supabase:init
+   npx supabase init
    
    # Inicia los contenedores de Supabase
-   npm run supabase:start
+   npx supabase start
    ```
 
    **Para usos posteriores**, solo necesitarás ejecutar:
    ```bash
-   npm run supabase:start
+   npx supabase start
    ```
 
    Para detener Supabase:
    ```bash
-   npm run supabase:stop
+   npx supabase stop
    ```
 
    Si necesitas reiniciar la instancia de Supabase (por ejemplo, después de hacer cambios en la configuración):
    ```bash
-   npm run supabase:reset
+   npx supabase stop --no-backup && npx supabase start
    ```
 
 5. Inicia el servidor de desarrollo:
@@ -88,7 +88,7 @@ pnpm dev
   - `App.tsx` - Componente principal
   - `main.tsx` - Punto de entrada de la aplicación
 - `/public` - Archivos públicos
-- `/supabase` - Configuración de Supabase (se crea al ejecutar `supabase:init`)
+- `/supabase` - Configuración de Supabase (se crea al ejecutar `npx supabase init`)
 - `.env` - Variables de entorno (copiar de `.env.example` y configurar)
 - `.env.example` - Plantilla de variables de entorno
 
@@ -104,7 +104,4 @@ pnpm dev
 - `npm run preview` - Previsualiza la versión de producción
 
 ### Supabase
-- `npm run supabase:init` - Inicializa la configuración de Supabase (solo primera vez)
-- `npm run supabase:start` - Inicia los contenedores de Supabase
-- `npm run supabase:stop` - Detiene los contenedores de Supabase
-- `npm run supabase:reset` - Reinicia la instancia de Supabase (detiene sin backup y vuelve a iniciar)
+- `npm run supabase:restart` - (alternativa cómoda) Reinicia la instancia de Supabase

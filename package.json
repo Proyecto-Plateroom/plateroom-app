@@ -8,10 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "supabase:init": "npx supabase init",
-    "supabase:start": "npx supabase start",
-    "supabase:stop": "npx supabase stop",
-    "supabase:reset": "npx supabase stop --no-backup && npx supabase start"
+    "supabase:restart": "npx supabase stop --no-backup && npx supabase start"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.31.2",
