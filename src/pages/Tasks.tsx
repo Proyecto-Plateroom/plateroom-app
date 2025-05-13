@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser, useSession } from '@clerk/clerk-react';
 import { createClient } from '@supabase/supabase-js';
-import './Tasks.css';
 
 // Tipos
 interface Task {
