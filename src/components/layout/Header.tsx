@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { SignedIn, SignedOut, UserButton, SignInButton, OrganizationSwitcher } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/clerk-react';
 
 export const Header = () => {
     const location = useLocation();
