@@ -85,6 +85,17 @@ pnpm dev
 
 - `/src` - Código fuente de la aplicación
   - `/assets` - Recursos estáticos
+  - `/components/` - Componentes reutilizables
+  - `/contexts/` - Contextos de React para estado global
+  - `/hooks/` - Hooks personalizados
+  - `/pages/` - Vistas principales de la app
+    - `/Room/` - (ejemplo)
+      - `Room.tsx` - Componente principal
+      - `/components/` - Componentes específicos
+  - `/services/` - Servicios y lógica de acceso a datos externos (APIs, Supabase, etc.)
+  - `/utils/` - Funciones utilitarias y helpers
+  - `/entities/` - Entidades del dominio
+  - `types.ts` - Tipos de la aplicación
   - `App.tsx` - Componente principal
   - `main.tsx` - Punto de entrada de la aplicación
 - `/public` - Archivos públicos

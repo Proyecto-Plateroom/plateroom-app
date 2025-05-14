@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, UserButton, SignInButton, OrganizationSwitcher } from '@clerk/clerk-react';
 
 export const Header = () => {
     const location = useLocation();
@@ -34,13 +34,14 @@ export const Header = () => {
                     <HeaderLinks css="menu bg-base-200 min-h-full w-80 p-4" isActive={isActive} />
                 </div>
 
-                <div className="auth-buttons">
+                <div className="auth-buttons flex gap-2">
                     <SignedOut>
                         <SignInButton mode="modal">
                             <button className="sign-in-button">Iniciar sesión</button>
                         </SignInButton>
                     </SignedOut>
                     <SignedIn>
+                        <OrganizationSwitcher hidePersonal />
                         <UserButton />
                     </SignedIn>
                 </div>
