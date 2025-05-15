@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useUser, useSession } from '@clerk/clerk-react';
+import { useUser, useSession, useOrganization } from '@clerk/clerk-react';
 import { createClient } from '@supabase/supabase-js';
 
 // Tipos
@@ -24,7 +24,8 @@ export default function Tasks() {
     const [taskName, setTaskName] = useState('');
     const { user, isLoaded: isUserLoaded } = useUser();
     const { session, isLoaded: isSessionLoaded } = useSession();
-
+    const { organization } = useOrganization();
+    
     // Crear el cliente de Supabase
     function createClerkSupabaseClient() {
         return createClient(
@@ -74,7 +75,8 @@ export default function Tasks() {
                 .from('tasks')
                 .insert([{
                     name: taskName,
-                    user_id: user.id
+                    user_id: user.id,
+                    organization_id: organization?.id
                 }]);
 
             if (error) throw error;
