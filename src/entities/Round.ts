@@ -9,7 +9,7 @@ export interface Round {
     order_id: number;
 }
 
-export class Round extends BaseModel<Round> implements Round {
+export class RoundModel extends BaseModel<Round> implements Round {
     id: number;
     number: number;
     is_open: boolean;

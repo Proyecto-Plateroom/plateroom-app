@@ -7,7 +7,7 @@ export interface DishCategory {
     name: string;
 }
 
-export class DishCategory extends BaseModel<DishCategory> implements DishCategory {
+export class DishCategoryModel extends BaseModel<DishCategory> implements DishCategory {
     id: number;
     name: string;
 

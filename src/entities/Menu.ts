@@ -11,7 +11,7 @@ export interface Menu {
     updated_at?: string;
 }
 
-export class Menu extends BaseModel<Menu> implements Menu {
+export class MenuModel extends BaseModel<Menu> implements Menu {
     id: number;
     name: string;
     price: number;

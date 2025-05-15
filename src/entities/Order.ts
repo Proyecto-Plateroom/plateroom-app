@@ -11,7 +11,7 @@ export interface Order {
     table_id: number;
 }
 
-export class Order extends BaseModel<Order> implements Order {
+export class OrderModel extends BaseModel<Order> implements Order {
     id: number;
     uuid: string;
     total_amount: number;

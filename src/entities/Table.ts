@@ -11,7 +11,7 @@ export interface Table {
     updated_at?: string;
 }
 
-export class Table extends BaseModel<Table> implements Table {
+export class TableModel extends BaseModel<Table> implements Table {
     id: number;
     name: string;
     seats: number;
