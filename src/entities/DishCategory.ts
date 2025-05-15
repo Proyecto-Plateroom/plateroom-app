@@ -11,7 +11,7 @@ export class DishCategory extends BaseModel<DishCategory> implements DishCategor
     id: number;
     name: string;
 
-    constructor(init?: Partial<DishCategory>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<DishCategory>) {
         super(init, supabaseClient);
 
         this.id = init?.id ?? 0;

@@ -19,7 +19,7 @@ export class Menu extends BaseModel<Menu> implements Menu {
     created_at?: string;
     updated_at?: string;
 
-    constructor(init?: Partial<Menu>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<Menu>) {
         super(init, supabaseClient);
 
         this.id = init?.id ?? 0;

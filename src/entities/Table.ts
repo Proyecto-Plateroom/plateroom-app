@@ -19,7 +19,7 @@ export class Table extends BaseModel<Table> implements Table {
     created_at?: string;
     updated_at?: string;
 
-    constructor(init?: Partial<Table>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<Table>) {
         super(init, supabaseClient);
 
         this.id = init?.id ?? 0;

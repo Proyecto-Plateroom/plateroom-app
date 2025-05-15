@@ -19,10 +19,9 @@ export class DishModel extends BaseModel<Dish> implements Dish {
     photo_path: string;
     category_id: number;
 
-    
-    constructor(init?: Partial<Dish>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<Dish>) {
         super(init, supabaseClient);
-        
+
         this.id = init?.id ?? 0;
         this.name = init?.name ?? '';
         this.description = init?.description ?? '';

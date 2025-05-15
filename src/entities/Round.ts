@@ -15,7 +15,7 @@ export class Round extends BaseModel<Round> implements Round {
     is_open: boolean;
     order_id: number;
 
-    constructor(init?: Partial<Round>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<Round>) {
         super(init, supabaseClient);
 
         this.id = init?.id ?? 0;

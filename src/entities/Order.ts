@@ -19,7 +19,7 @@ export class Order extends BaseModel<Order> implements Order {
     menu_id: number;
     table_id: number;
 
-    constructor(init?: Partial<Order>, supabaseClient?: SupabaseClient) {
+    constructor(supabaseClient?: SupabaseClient, init?: Partial<Order>) {
         super(init, supabaseClient);
 
         this.id = init?.id ?? 0;
