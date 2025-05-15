@@ -50,8 +50,7 @@ export default function Tasks() {
                 setLoading(true);
                 const { data, error } = await supabase
                     .from('tasks')
-                    .select('*')
-                    .eq('organization_id', organization?.id);
+                    .select('*');
 
                 if (error) throw error;
                 setTasks(data || []);
