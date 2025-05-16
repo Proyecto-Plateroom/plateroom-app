@@ -10,34 +10,21 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/" element={<App />}>
                 <Route index element={<Home />} />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Dashboard />
-                            </SignedIn>
-                            <SignedOut>
-                                <Navigate to="/" />
-                            </SignedOut>
-                        </>
-                    }
-                />
-                <Route
-                    path="/tasks"
-                    element={
-                        <>
-                            <SignedIn>
-                                <Tasks />
-                            </SignedIn>
-                            <SignedOut>
-                                <Navigate to="/" />
-                            </SignedOut>
-                        </>
-                    }
-                />
+                <Route path="/dashboard" element={ProtectedRoute({ children: <Dashboard /> })}/>
+                <Route path="/tasks" element={ProtectedRoute({ children: <Tasks /> })} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Route>
         </Routes>
+    );
+}
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+    return (
+        <>
+            <SignedIn>{children}</SignedIn>
+            <SignedOut>
+                <Navigate to="/" />
+            </SignedOut>
+        </>
     );
 }
