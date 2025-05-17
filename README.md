@@ -151,8 +151,6 @@ const { data: { publicUrl } } = supabase
   .storage
   .from('plateroom-images')
   .getPublicUrl(filePath);
-
-console.log('URL pública:', publicUrl);
 ```
 
 ## Migraciones de Base de Datos con Supabase
