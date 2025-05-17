@@ -17,6 +17,10 @@ export abstract class BaseModel<T> {
     return this.supabase.from(this.tableName)
   }
 
+  rawQuery(table: string) {
+    return this.supabase.from(table)
+  }
+
   toJSON(): string {
     return JSON.stringify(this)
   }
