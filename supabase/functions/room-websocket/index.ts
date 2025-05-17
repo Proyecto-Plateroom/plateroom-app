@@ -3,21 +3,26 @@
 // This enables autocomplete, go to definition, etc.
 
 // Setup type definitions for built-in Supabase Runtime APIs
-import "jsr:@supabase/functions-js/edge-runtime.d.ts"
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-console.log("Hello from Functions!")
-
-Deno.serve(async (req) => {
-  const { name } = await req.json()
-  const data = {
-    message: `Hello ${name}!`,
+Deno.serve((req) => {
+  const upgrade = req.headers.get("upgrade") || "";
+  if (upgrade.toLowerCase() != "websocket") {
+    return new Response("request isn't trying to upgrade to websocket.");
   }
 
-  return new Response(
-    JSON.stringify(data),
-    { headers: { "Content-Type": "application/json" } },
-  )
-})
+  const { socket, response } = Deno.upgradeWebSocket(req);
+  socket.onopen = () => {
+    console.log("client connected!");
+    socket.send("Welcome to Supabase Edge Functions!");
+  };
+  socket.onmessage = (e) => {
+    console.log("client sent message:", e.data);
+    socket.send(new Date().toString());
+  };
+  
+  return response;
+});
 
 /* To invoke locally:
 
