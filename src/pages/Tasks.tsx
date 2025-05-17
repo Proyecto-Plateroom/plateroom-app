@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type ChangeEvent } from 'react';
 import { useUser, useSession, useOrganization } from '@clerk/clerk-react';
 import { createClient } from '@supabase/supabase-js';
 
@@ -26,6 +26,11 @@ export default function Tasks() {
     const { session, isLoaded: isSessionLoaded } = useSession();
     const { organization } = useOrganization();
     
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadMessage, setUploadMessage] = useState<{type: 'success' | 'error', message: string} | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     // Crear el cliente de Supabase
     function createClerkSupabaseClient() {
         return createClient(
@@ -101,9 +106,121 @@ export default function Tasks() {
         return <div className="tasks-container">Por favor inicia sesión para ver tus tareas.</div>;
     }
 
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedFile(e.target.files[0]);
+            setUploadMessage(null);
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!selectedFile) return;
+        if (!user?.id) {
+            setUploadMessage({ type: 'error', message: 'Debes iniciar sesión para subir archivos' });
+            return;
+        }
+
+        setUploading(true);
+        setUploadMessage(null);
+
+        try {
+            // Crear un nombre de archivo único
+            const fileExt = selectedFile.name.split('.').pop();
+            const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+            const filePath = `${organization?.id}/uploads/${fileName}`;
+
+            const { data, error } = await supabase
+                .storage
+                .from('plateroom-images')
+                .upload(filePath, selectedFile, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (error) throw error;
+
+            // Obtener la URL pública de la imagen subida
+            const { data: { publicUrl } } = supabase
+                .storage
+                .from('plateroom-images')
+                .getPublicUrl(filePath);
+
+            console.log('URL pública de la imagen:', publicUrl);
+            
+            setUploadMessage({ type: 'success', message: '¡Archivo subido exitosamente!' });
+            
+            // Limpiar el input de archivo
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+            setSelectedFile(null);
+        } catch (error) {
+            console.error('Error al subir el archivo:', error);
+            setUploadMessage({ 
+                type: 'error', 
+                message: error instanceof Error ? error.message : 'Error al subir el archivo' 
+            });
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
         <div className="tasks-container">
             <h2>Mis Tareas</h2>
+
+            <div className="upload-section" style={{ margin: '20px 0', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                <h3>Subir Imagen</h3>
+                <div style={{ marginBottom: '10px' }}>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        id="file-upload"
+                    />
+                    <label 
+                        htmlFor="file-upload"
+                        style={{
+                            display: 'inline-block',
+                            padding: '8px 16px',
+                            backgroundColor: '#f0f0f0',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginRight: '10px'
+                        }}
+                    >
+                        {selectedFile ? selectedFile.name : 'Seleccionar archivo'}
+                    </label>
+                    <button
+                        type="button"
+                        onClick={handleUpload}
+                        disabled={!selectedFile || uploading}
+                        style={{
+                            padding: '8px 16px',
+                            backgroundColor: selectedFile && !uploading ? '#4CAF50' : '#cccccc',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: selectedFile && !uploading ? 'pointer' : 'not-allowed'
+                        }}
+                    >
+                        {uploading ? 'Subiendo...' : 'Subir Imagen'}
+                    </button>
+                </div>
+                {uploadMessage && (
+                    <div style={{
+                        marginTop: '10px',
+                        padding: '8px',
+                        backgroundColor: uploadMessage.type === 'success' ? '#e6f7e6' : '#ffebee',
+                        borderLeft: `4px solid ${uploadMessage.type === 'success' ? '#4CAF50' : '#f44336'}`,
+                        borderRadius: '4px'
+                    }}>
+                        {uploadMessage.message}
+                    </div>
+                )}
+            </div>
 
             <form onSubmit={handleSubmit} className="task-form">
                 <input
