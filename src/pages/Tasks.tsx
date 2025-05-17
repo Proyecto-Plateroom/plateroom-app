@@ -127,7 +127,7 @@ export default function Tasks() {
             // Crear un nombre de archivo único
             const fileExt = selectedFile.name.split('.').pop();
             const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-            const filePath = `${organization?.id}/uploads/${fileName}`;
+            const filePath = `${organization?.id}/dishes/${fileName}`;
 
             const { data, error } = await supabase
                 .storage

@@ -136,7 +136,7 @@ Para el almacenamiento de archivos, se utiliza el bucket `plateroom-images` en S
 // 1. Subir el archivo
 const fileExt = file.name.split('.').pop();
 const fileName = `${userId}-${Date.now()}.${fileExt}`;
-const filePath = `${organizationId}/uploads/${fileName}`;
+const filePath = `${organizationId}/dishes/${fileName}`;
 
 const { error: uploadError } = await supabase
   .storage
