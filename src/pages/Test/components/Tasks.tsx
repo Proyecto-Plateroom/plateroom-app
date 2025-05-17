@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser, useOrganization } from '@clerk/clerk-react';
-import { useSupabaseClient } from '../../../hooks/useSupabaseClient';
+import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 
 interface Task {
     id: number;
