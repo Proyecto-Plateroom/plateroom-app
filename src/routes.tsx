@@ -3,7 +3,7 @@ import { SignedIn, SignedOut } from '@clerk/clerk-react';
 import App from './App';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import Tasks from './pages/Tasks';
+import Test from './pages/Test/Test';
 
 export default function AppRoutes() {
     return (
@@ -24,11 +24,11 @@ export default function AppRoutes() {
                     }
                 />
                 <Route
-                    path="/tasks"
+                    path="/test"
                     element={
                         <>
                             <SignedIn>
-                                <Tasks />
+                                <Test />
                             </SignedIn>
                             <SignedOut>
                                 <Navigate to="/" />
