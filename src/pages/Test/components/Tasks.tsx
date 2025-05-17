@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useUser, useSession, useOrganization } from '@clerk/clerk-react';
-import { createClient } from '@supabase/supabase-js';
+import { useUser, useOrganization } from '@clerk/clerk-react';
+import { useSupabaseClient } from '../../../hooks/useSupabaseClient';
 
 interface Task {
     id: number;
@@ -14,27 +14,13 @@ export default function Tasks() {
     const [loading, setLoading] = useState(true);
     const [taskName, setTaskName] = useState('');
     const { user, isLoaded: isUserLoaded } = useUser();
-    const { session, isLoaded: isSessionLoaded } = useSession();
     const { organization } = useOrganization();
 
-    // Crear el cliente de Supabase
-    function createClerkSupabaseClient() {
-        return createClient(
-            import.meta.env.VITE_SUPABASE_URL!,
-            import.meta.env.VITE_SUPABASE_ANON_KEY!,
-            {
-                async accessToken() {
-                    return session?.getToken() ?? null;
-                },
-            },
-        );
-    }
-
-    const supabase = createClerkSupabaseClient();
+    const supabase = useSupabaseClient();
 
     // Cargar tareas
     useEffect(() => {
-        if (!isUserLoaded || !isSessionLoaded || !user || !session) return;
+        if (!isUserLoaded || !user) return;
 
         const loadTasks = async () => {
             try {
@@ -53,12 +39,12 @@ export default function Tasks() {
         };
 
         loadTasks();
-    }, [user, session, isUserLoaded, isSessionLoaded]);
+    }, [user, isUserLoaded, supabase]);
 
     // Crear una nueva tarea
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user || !session || !taskName.trim()) return;
+        if (!user || !taskName.trim()) return;
 
         try {
             const { error } = await supabase
@@ -84,7 +70,7 @@ export default function Tasks() {
         }
     };
 
-    if (!isUserLoaded || !isSessionLoaded) {
+    if (!isUserLoaded) {
         return <div>Cargando tareas...</div>;
     }
 

@@ -1,29 +1,16 @@
 import { useState, useRef, type ChangeEvent } from 'react';
-import { useUser, useOrganization, useSession } from '@clerk/clerk-react';
-import { createClient } from '@supabase/supabase-js';
+import { useUser, useOrganization } from '@clerk/clerk-react';
+import { useSupabaseClient } from '../../../hooks/useSupabaseClient';
 
 export default function ImageUpload() {
     const { user } = useUser();
     const { organization } = useOrganization();
-    const { session, isLoaded: isSessionLoaded } = useSession();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState<{type: 'success' | 'error', message: string} | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Crear el cliente de Supabase
-    function createClerkSupabaseClient() {
-        return createClient(
-            import.meta.env.VITE_SUPABASE_URL!,
-            import.meta.env.VITE_SUPABASE_ANON_KEY!,
-            {
-                async accessToken() {
-                    return session?.getToken() ?? null
-                },
-            },
-        );
-    }
-
+    const supabase = useSupabaseClient();
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -41,8 +28,6 @@ export default function ImageUpload() {
 
         setUploading(true);
         setUploadMessage(null);
-
-        const supabase = createClerkSupabaseClient();
 
         try {
             // Crear un nombre de archivo único
