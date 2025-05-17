@@ -12,15 +12,17 @@ Deno.serve((req) => {
   }
 
   const { socket, response } = Deno.upgradeWebSocket(req);
+
   socket.onopen = () => {
     console.log("client connected!");
     socket.send("Welcome to Supabase Edge Functions!");
   };
+  
   socket.onmessage = (e) => {
     console.log("client sent message:", e.data);
     socket.send(new Date().toString());
   };
-  
+
   return response;
 });
 
