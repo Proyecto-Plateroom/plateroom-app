@@ -117,6 +117,44 @@ pnpm dev
 ### Supabase
 - `npm run supabase:restart` - (alternativa cómoda) Reinicia la instancia de Supabase
 
+## Almacenamiento en Supabase
+
+### Configuración del Bucket
+
+Para el almacenamiento de archivos, se utiliza el bucket `plateroom-images` en Supabase Storage. Este bucket debe tener las siguientes políticas configuradas:
+
+1. **Política de inserción (upload)**:
+   - Ruta del archivo debe comenzar con `[organization_id]/`
+   - Autenticación requerida
+
+2. **Política de lectura (select)**:
+   - Acceso público a los archivos
+
+### Ejemplo de código para subir archivos
+
+```typescript
+// 1. Subir el archivo
+const fileExt = file.name.split('.').pop();
+const fileName = `${userId}-${Date.now()}.${fileExt}`;
+const filePath = `${organizationId}/uploads/${fileName}`;
+
+const { error: uploadError } = await supabase
+  .storage
+  .from('plateroom-images')
+  .upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: false
+  });
+
+// 2. Obtener la URL pública
+const { data: { publicUrl } } = supabase
+  .storage
+  .from('plateroom-images')
+  .getPublicUrl(filePath);
+
+console.log('URL pública:', publicUrl);
+```
+
 ## Migraciones de Base de Datos con Supabase
 
 ### Crear una nueva migración
