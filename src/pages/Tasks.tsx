@@ -30,6 +30,10 @@ export default function Tasks() {
     const [uploading, setUploading] = useState(false);
     const [uploadMessage, setUploadMessage] = useState<{type: 'success' | 'error', message: string} | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    
+    const [wsMessage, setWsMessage] = useState<string>('');
+    const [wsMessages, setWsMessages] = useState<string[]>([]);
+    const [ws, setWs] = useState<WebSocket | null>(null);
 
     // Crear el cliente de Supabase
     function createClerkSupabaseClient() {
@@ -165,9 +169,106 @@ export default function Tasks() {
         }
     };
 
+    // Configurar WebSocket
+    useEffect(() => {
+        if (!user) return;
+
+        // Token de autenticación para la edge function
+        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+        
+        // URL de la edge function WebSocket
+        const wsUrl = 'http://127.0.0.1:64321/functions/v1/room-websocket';
+        const socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+            console.log('WebSocket conectado');
+            setWs(socket);
+            setWsMessages(prev => [...prev, 'Conectado al servidor WebSocket']);
+        };
+
+        socket.onmessage = (event) => {
+            console.log('Mensaje recibido:', event.data);
+            setWsMessages(prev => [...prev, `Servidor: ${event.data}`]);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket desconectado');
+            setWs(null);
+            setWsMessages(prev => [...prev, 'Desconectado del servidor WebSocket']);
+        };
+
+        socket.onerror = (error) => {
+            console.error('Error en WebSocket:', error);
+            setWsMessages(prev => [...prev, `Error: ${error}`]);
+        };
+
+        return () => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.close();
+            }
+        };
+    }, [user]);
+
+    const sendWsMessage = () => {
+        if (!ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()) return;
+        
+        ws.send(wsMessage);
+        setWsMessages(prev => [...prev, `Tú: ${wsMessage}`]);
+        setWsMessage('');
+    };
+
     return (
         <div className="tasks-container">
             <h2>Mis Tareas</h2>
+
+            {/* Sección de WebSocket */}
+            <div className="websocket-section" style={{ margin: '20px 0', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                <h3>Chat WebSocket</h3>
+                <div style={{ 
+                    height: '200px', 
+                    overflowY: 'auto', 
+                    marginBottom: '10px', 
+                    padding: '10px', 
+                    border: '1px solid #eee',
+                    borderRadius: '4px'
+                }}>
+                    {wsMessages.length === 0 ? (
+                        <p>Conectando al servidor WebSocket...</p>
+                    ) : (
+                        wsMessages.map((msg, index) => (
+                            <div key={index} style={{ margin: '5px 0' }}>{msg}</div>
+                        ))
+                    )}
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <input
+                        type="text"
+                        value={wsMessage}
+                        onChange={(e) => setWsMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && sendWsMessage()}
+                        placeholder="Escribe un mensaje..."
+                        style={{ flex: 1, padding: '8px' }}
+                        disabled={!ws || ws.readyState !== WebSocket.OPEN}
+                    />
+                    <button
+                        onClick={sendWsMessage}
+                        disabled={!ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()}
+                        style={{
+                            padding: '8px 16px',
+                            backgroundColor: ws && ws.readyState === WebSocket.OPEN ? '#4CAF50' : '#cccccc',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: ws && ws.readyState === WebSocket.OPEN ? 'pointer' : 'not-allowed'
+                        }}
+                    >
+                        Enviar
+                    </button>
+                </div>
+                <div style={{ marginTop: '10px', color: '#666' }}>
+                    Estado: {!ws ? 'Desconectado' : ws.readyState === WebSocket.OPEN ? 'Conectado' : 'Conectando...'}
+                </div>
+            </div>
 
             <div className="upload-section" style={{ margin: '20px 0', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
                 <h3>Subir Imagen</h3>
