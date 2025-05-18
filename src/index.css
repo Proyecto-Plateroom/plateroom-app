@@ -3,6 +3,10 @@
     themes: bumblebee;
 }
 
+* {
+  outline: none;
+}
+
 h1 {
     @apply text-2xl font-bold;
 }
@@ -20,4 +24,9 @@ h5 {
 }
 h6 {
     @apply text-xs font-semibold;
+}
+
+.main-sidebar {
+    @apply grid grid-cols-1
+        sm:grid-cols-[1fr_3fr];
 }
