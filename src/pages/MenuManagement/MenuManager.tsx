@@ -37,9 +37,8 @@ export default function MenuManagement() {
     const handleAddNewMenu = async () => {
         if (!newMenu.name || !newMenu.price) return;
         const newMenuItem = await createMenu(supabase, {...newMenu, organization_id: organization?.id});
-        console.log("newMenuItem", newMenuItem);
-        
         fetchMenus();
+        fetchMenu(newMenuItem);
         setMenu(newMenuItem);
         setNewMenu(menuBase);
     }
