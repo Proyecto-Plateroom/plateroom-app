@@ -7,7 +7,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { Order, Round } from './interfaces.ts'
 
-// Almacén de salas (rooms) por order_uuid
+// Store rooms by order_uuid
 const rooms: Record<string, WebSocket[]> = {};
 
 const supabase = createClient(
@@ -54,6 +54,15 @@ const fetchRound = async (order_id: number): Promise<Round | Response> => {
   return data;
 }
 
+const broadcastMessage = (order_uuid: string, message: string, currentClient?: WebSocket) => {
+  if (!rooms[order_uuid]) return;
+  rooms[order_uuid].forEach(client => {
+    if (client !== currentClient && client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
+  });
+}
+
 Deno.serve(async (req: any) => {
   // Check that request is a websocket upgrade
   const upgrade = req.headers.get("upgrade") || "";
@@ -81,46 +90,44 @@ Deno.serve(async (req: any) => {
     return round;
   }
 
-  // Añadir el socket a la sala correspondiente
+  // Add the socket to the corresponding room
   if (!rooms[order_uuid]) {
     rooms[order_uuid] = [];
   }
   rooms[order_uuid].push(socket);
   
+  // Handle connection open
   socket.onopen = () => {
     socket.send(`Welcome to Plateroom for order ${order_uuid}.`);
-    socket.send(`Round data: ${JSON.stringify(round)}`);
+    broadcastMessage(order_uuid, `Client joined the room.`, socket);
   };
   
-  // Manejar mensajes entrantes
+  // Handle incoming messages
   socket.onmessage = (e: any) => {
-    // Enviar el mensaje a todos los demás sockets en la misma sala
-    if (rooms[order_uuid]) {
-      rooms[order_uuid].forEach(client => {
-        if (client !== socket && client.readyState === WebSocket.OPEN) {
-          client.send(e.data);
-        }
-        client.send(`Clients in room ${order_uuid}: ${rooms[order_uuid].length}`);
-      });
-    }
+    // Send the message to all other sockets in the same room
+    const data = JSON.parse(e.data);
+    broadcastMessage(order_uuid, data.text, socket);
   };
   
-  // Manejar cierre de conexión
+  // Handle connection close
   socket.onclose = () => {
     if (rooms[order_uuid]) {
-      // Eliminar el socket de la sala
+      // Remove the socket from the room
       rooms[order_uuid] = rooms[order_uuid].filter(s => s !== socket);
       
-      // Si no hay más sockets en la sala, eliminar la sala
+      // If there are no more sockets in the room, delete the room
       if (rooms[order_uuid].length === 0) {
         delete rooms[order_uuid];
+        return;
       }
     }
+
+    broadcastMessage(order_uuid, `Client left the room.`);
   };
   
-  // Manejar errores
+  // Handle errors
   socket.onerror = (error) => {
-    console.error(`Error en WebSocket para la sala ${order_uuid}:`, error);
+    console.error(`Error in WebSocket for room ${order_uuid}:`, error);
   };
 
   return response;

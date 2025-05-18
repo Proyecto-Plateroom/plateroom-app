@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 
@@ -17,6 +17,7 @@ export default function WebSocketTest() {
     const [wsMessage, setWsMessage] = useState<string>('');
     const [wsMessages, setWsMessages] = useState<string[]>([]);
     const [ws, setWs] = useState<WebSocket | null>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
     
     // Cargar pedidos al montar el componente
     useEffect(() => {
@@ -48,6 +49,11 @@ export default function WebSocketTest() {
         fetchOrders();
     }, [user, supabase]);
     
+    // Desplazar al final del chat cuando se actualicen los mensajes
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [wsMessages]);
+
     // Configurar WebSocket cuando se selecciona un pedido
     useEffect(() => {
         if (!selectedOrderUuid) return;
@@ -56,7 +62,7 @@ export default function WebSocketTest() {
         if (ws) {
             ws.close();
             setWs(null);
-            setWsMessages([]);
+            setWsMessages(prev => [...prev, '🔌 Reconectando...']);
         }
         
         // URL de la edge function WebSocket con el ID del pedido como parámetro
@@ -111,6 +117,10 @@ export default function WebSocketTest() {
         setWsMessage('');
     };
 
+    const clearChat = () => {
+        setWsMessages([]);
+    };
+
     return (
         <div className="space-y-4">
             
@@ -148,6 +158,18 @@ export default function WebSocketTest() {
             
             {/* Chat WebSocket */}
             <div className="border rounded-lg p-4 bg-gray-50">
+                <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-medium">Chat del Pedido</h3>
+                    <button
+                        onClick={clearChat}
+                        className={`px-3 py-1 text-sm rounded ${
+                            'bg-red-500 hover:bg-red-600 text-white'
+                        }`}
+                        title="Limpiar mensajes del chat"
+                    >
+                        Limpiar chat
+                    </button>
+                </div>
                 <div className="h-64 overflow-y-auto mb-4 p-2 bg-white rounded border">
                     {!selectedOrderUuid ? (
                         <p className="text-gray-500">Selecciona un pedido para comenzar el chat</p>
@@ -158,6 +180,7 @@ export default function WebSocketTest() {
                             {wsMessages.map((msg, index) => (
                                 <div key={index} className="break-words">{msg}</div>
                             ))}
+                            <div ref={messagesEndRef} />
                         </div>
                     )}
                 </div>
