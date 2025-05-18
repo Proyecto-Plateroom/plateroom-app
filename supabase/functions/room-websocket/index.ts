@@ -34,26 +34,6 @@ const fetchOrder = async (order_uuid: string): Promise<Order | Response> => {
   return data[0];
 };
 
-const fetchRound = async (order_id: number): Promise<Round | Response> => {
-  const { data, error } = await supabase
-  .from('rounds')
-  .select('number, is_open, dishes (id, name, dish_round (quantity))')
-  .eq('order_id', order_id)
-  .eq('is_open', true)
-  .limit(1)
-  .single();
-
-  if (error) {
-    return new Response("Error fetching round.", { status: 500 });
-  }
-
-  if (!data) {
-    return new Response("Round not found.", { status: 400 });
-  }
-
-  return data;
-}
-
 const broadcastMessage = (order_uuid: string, message: string, currentClient?: WebSocket) => {
   if (!rooms[order_uuid]) return;
   rooms[order_uuid].forEach(client => {
@@ -82,15 +62,9 @@ Deno.serve(async (req: any) => {
     return order;
   }
 
-  // Upgrade request to websocket, fetch round and manage websocket connection
+  // Upgrade request to websocket and add the socket to the corresponding room
   const { socket, response } = Deno.upgradeWebSocket(req);
 
-  const round = await fetchRound(order.id);
-  if (round instanceof Response) {
-    return round;
-  }
-
-  // Add the socket to the corresponding room
   if (!rooms[order_uuid]) {
     rooms[order_uuid] = [];
   }
