@@ -7,6 +7,9 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { Order, Round } from './interfaces.ts'
 
+// Almacén de salas (rooms) por order_uuid
+const rooms: Record<string, WebSocket[]> = {};
+
 const supabase = createClient(
   Deno.env.get("APP_SUPABASE_URL"),
   Deno.env.get("APP_SUPABASE_SERVICE_ROLE_KEY"),
@@ -78,13 +81,46 @@ Deno.serve(async (req: any) => {
     return round;
   }
 
+  // Añadir el socket a la sala correspondiente
+  if (!rooms[order_uuid]) {
+    rooms[order_uuid] = [];
+  }
+  rooms[order_uuid].push(socket);
+  
   socket.onopen = () => {
     socket.send(`Welcome to Plateroom for order ${order_uuid}.`);
     socket.send(`Round data: ${JSON.stringify(round)}`);
   };
   
+  // Manejar mensajes entrantes
   socket.onmessage = (e: any) => {
-    socket.send(`Server received: ${e.data}`);
+    // Enviar el mensaje a todos los demás sockets en la misma sala
+    if (rooms[order_uuid]) {
+      rooms[order_uuid].forEach(client => {
+        if (client !== socket && client.readyState === WebSocket.OPEN) {
+          client.send(e.data);
+        }
+        client.send(`Clients in room ${order_uuid}: ${rooms[order_uuid].length}`);
+      });
+    }
+  };
+  
+  // Manejar cierre de conexión
+  socket.onclose = () => {
+    if (rooms[order_uuid]) {
+      // Eliminar el socket de la sala
+      rooms[order_uuid] = rooms[order_uuid].filter(s => s !== socket);
+      
+      // Si no hay más sockets en la sala, eliminar la sala
+      if (rooms[order_uuid].length === 0) {
+        delete rooms[order_uuid];
+      }
+    }
+  };
+  
+  // Manejar errores
+  socket.onerror = (error) => {
+    console.error(`Error en WebSocket para la sala ${order_uuid}:`, error);
   };
 
   return response;
