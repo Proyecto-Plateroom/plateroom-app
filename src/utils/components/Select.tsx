@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 interface SelectProps<T> {
     items: T[];
     itemIdField?: keyof T;
@@ -11,17 +13,26 @@ export default function Select<T>({
     itemNameField = "name" as keyof T,
     itemOnSelect
 }: SelectProps<T>) {
+    const [selectedId, setSelectedId] = useState<string>('');
+
+    useEffect(() => {
+        setSelectedId('');
+    }, [items]);
+
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = e.target.value;
+        setSelectedId(selectedId);
+        console.log("selectedId", selectedId);
+        
         const selectedItem = items.find(item => String(item[itemIdField]) === selectedId);
         if (selectedItem) itemOnSelect(selectedItem);
     };
 
     return (
-        <select defaultValue="" className="select" disabled={items.length === 0} onChange={handleChange}>
-            <option disabled={true} hidden></option>
-            {items.map((item, index) => (
-                <option key={index} value={item[itemIdField] as string}>
+        <select className="select" onChange={handleChange} value={selectedId}>
+            <option value="" disabled={true}></option>
+            {items.map((item) => (
+                <option key={item[itemIdField] as string} value={item[itemIdField] as string}>
                     {item[itemNameField] as string}
                 </option>
             ))}
