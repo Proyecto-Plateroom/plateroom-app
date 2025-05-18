@@ -3,7 +3,7 @@ import { useUser } from '@clerk/clerk-react';
 import { useSupabaseClient } from '@/hooks/useSupabaseClient';
 
 interface Order {
-    id: string;
+    uuid: string;
     created_at: string;
     // Puedes agregar más campos según la estructura de tu tabla orders
 }
@@ -12,9 +12,9 @@ export default function WebSocketTest() {
     const { user } = useUser();
     const supabase = useSupabaseClient();
     const [orders, setOrders] = useState<Order[]>([]);
-    const [selectedOrderId, setSelectedOrderId] = useState<string>('');
+    const [selectedOrderUuid, setSelectedOrderUuid] = useState<string>('');
     const [loading, setLoading] = useState(true);
-    const [wsMessage, setWsMessage] = useState('');
+    const [wsMessage, setWsMessage] = useState<string>('');
     const [wsMessages, setWsMessages] = useState<string[]>([]);
     const [ws, setWs] = useState<WebSocket | null>(null);
     
@@ -27,7 +27,7 @@ export default function WebSocketTest() {
                 setLoading(true);
                 const { data, error } = await supabase
                     .from('orders')
-                    .select('id, created_at')
+                    .select('uuid, created_at')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
@@ -35,7 +35,7 @@ export default function WebSocketTest() {
                 
                 // Seleccionar el primer pedido por defecto si hay pedidos disponibles
                 if (data && data.length > 0) {
-                    setSelectedOrderId(data[0].id);
+                    setSelectedOrderUuid(data[0].uuid);
                 }
             } catch (error) {
                 console.error('Error al cargar los pedidos:', error);
@@ -50,7 +50,7 @@ export default function WebSocketTest() {
     
     // Configurar WebSocket cuando se selecciona un pedido
     useEffect(() => {
-        if (!selectedOrderId) return;
+        if (!selectedOrderUuid) return;
         
         // Cerrar conexión anterior si existe
         if (ws) {
@@ -60,18 +60,18 @@ export default function WebSocketTest() {
         }
         
         // URL de la edge function WebSocket con el ID del pedido como parámetro
-        const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_id=${encodeURIComponent(selectedOrderId)}`;
+        const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_uuid=${encodeURIComponent(selectedOrderUuid)}`;
         const socket = new WebSocket(wsUrl);
         
         socket.onopen = () => {
-            console.log('WebSocket conectado para el pedido:', selectedOrderId);
+            console.log('WebSocket conectado para el pedido:', selectedOrderUuid);
             setWs(socket);
-            setWsMessages(prev => [...prev, `✅ Conectado al pedido: ${selectedOrderId}`]);
+            setWsMessages(prev => [...prev, `✅ Conectado al pedido: ${selectedOrderUuid}`]);
         };
         
         socket.onmessage = (event) => {
             console.log('Mensaje recibido:', event.data);
-            setWsMessages(prev => [...prev, `📨 [Pedido ${selectedOrderId}]: ${event.data}`]);
+            setWsMessages(prev => [...prev, `📨 [Pedido ${selectedOrderUuid}]: ${event.data}`]);
         };
         
         socket.onclose = () => {
@@ -90,10 +90,10 @@ export default function WebSocketTest() {
                 socket.close();
             }
         };
-    }, [selectedOrderId]);
+    }, [selectedOrderUuid]);
     
     const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedOrderId(e.target.value);
+        setSelectedOrderUuid(e.target.value);
         setWsMessages(prev => [...prev, `🔁 Seleccionado pedido: ${e.target.value}`]);
     };
 
@@ -102,12 +102,12 @@ export default function WebSocketTest() {
         
         const messageData = {
             text: wsMessage,
-            order_id: selectedOrderId,
+            order_uuid: selectedOrderUuid,
             timestamp: new Date().toISOString()
         };
         
         ws.send(JSON.stringify(messageData));
-        setWsMessages(prev => [...prev, `✉️ Tú (Pedido ${selectedOrderId}): ${wsMessage}`]);
+        setWsMessages(prev => [...prev, `✉️ Tú (Pedido ${selectedOrderUuid}): ${wsMessage}`]);
         setWsMessage('');
     };
 
@@ -121,7 +121,7 @@ export default function WebSocketTest() {
                 </label>
                 <select
                     id="order-select"
-                    value={selectedOrderId}
+                    value={selectedOrderUuid}
                     onChange={handleOrderChange}
                     className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     disabled={loading || orders.length === 0}
@@ -134,8 +134,8 @@ export default function WebSocketTest() {
                         <>
                             <option value="" disabled>Selecciona un pedido</option>
                             {orders.map((order) => (
-                                <option key={order.id} value={order.id}>
-                                    Pedido #{order.id} - {new Date(order.created_at).toLocaleString()}
+                                <option key={order.uuid} value={order.uuid}>
+                                    Pedido {order.uuid} - {new Date(order.created_at).toLocaleString()}
                                 </option>
                             ))}
                         </>
@@ -149,7 +149,7 @@ export default function WebSocketTest() {
             {/* Chat WebSocket */}
             <div className="border rounded-lg p-4 bg-gray-50">
                 <div className="h-64 overflow-y-auto mb-4 p-2 bg-white rounded border">
-                    {!selectedOrderId ? (
+                    {!selectedOrderUuid ? (
                         <p className="text-gray-500">Selecciona un pedido para comenzar el chat</p>
                     ) : wsMessages.length === 0 ? (
                         <p className="text-gray-500">Los mensajes aparecerán aquí...</p>
@@ -168,17 +168,17 @@ export default function WebSocketTest() {
                         value={wsMessage}
                         onChange={(e) => setWsMessage(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && sendWsMessage()}
-                        placeholder={!selectedOrderId ? "Selecciona un pedido primero" : "Escribe un mensaje..."}
+                        placeholder={!selectedOrderUuid ? "Selecciona un pedido primero" : "Escribe un mensaje..."}
                         className={`flex-1 p-2 border rounded ${
-                            !selectedOrderId ? 'bg-gray-100 cursor-not-allowed' : ''
+                            !selectedOrderUuid ? 'bg-gray-100 cursor-not-allowed' : ''
                         }`}
-                        disabled={!selectedOrderId || !ws || ws.readyState !== WebSocket.OPEN}
+                        disabled={!selectedOrderUuid || !ws || ws.readyState !== WebSocket.OPEN}
                     />
                     <button
                         onClick={sendWsMessage}
-                        disabled={!selectedOrderId || !ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()}
+                        disabled={!selectedOrderUuid || !ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()}
                         className={`px-4 py-2 rounded ${
-                            !selectedOrderId || !ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()
+                            !selectedOrderUuid || !ws || ws.readyState !== WebSocket.OPEN || !wsMessage.trim()
                                 ? 'bg-gray-300 cursor-not-allowed' 
                                 : 'bg-green-500 hover:bg-green-600 text-white'
                         }`}
@@ -187,9 +187,9 @@ export default function WebSocketTest() {
                     </button>
                 </div>
                 
-                {selectedOrderId && ws && ws.readyState === WebSocket.OPEN && (
+                {selectedOrderUuid && ws && ws.readyState === WebSocket.OPEN && (
                     <div className="mt-2 text-xs text-green-600">
-                        Conectado al pedido: {selectedOrderId}
+                        Conectado al pedido: {selectedOrderUuid}
                     </div>
                 )}
             </div>

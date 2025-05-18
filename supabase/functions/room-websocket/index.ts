@@ -4,22 +4,48 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'jsr:@supabase/supabase-js@2'
 
-Deno.serve((req: any) => {
+const supabase = createClient(
+  Deno.env.get("APP_SUPABASE_URL"),
+  Deno.env.get("APP_SUPABASE_SERVICE_ROLE_KEY"),
+);
+
+Deno.serve(async (req: any) => {
+  // Check that request is a websocket upgrade
   const upgrade = req.headers.get("upgrade") || "";
   if (upgrade.toLowerCase() != "websocket") {
-    return new Response("request isn't trying to upgrade to websocket.");
+    return new Response("request isn't trying to upgrade to websocket.", { status: 400 });
   }
 
-  // Please be aware query params may be logged in some logging systems.
+  // Check that order exists and is opened
   const url = new URL(req.url);
-  const order_id = url.searchParams.get('order_id');
+  const order_uuid = url.searchParams.get('order_uuid');
 
+  const { data , error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('uuid', order_uuid)
+    .eq('is_open', true)
+    .limit(1);
+
+  if (error) {
+    console.error("Error checking order:", error);
+    return new Response("Error checking order.", { status: 400 });
+  }
+
+  if (!data || data.length === 0) {
+    console.error("Order not found or not open.");
+    return new Response("Order not found or not open.", { status: 400 });
+  }
+
+  // Upgrade request to websocket and handle it
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   socket.onopen = () => {
     console.log("client connected!");
-    socket.send(`Welcome to Plateroom for order ${order_id}`);
+    socket.send(`Welcome to Plateroom for order ${order_uuid}.`);
+    socket.send(`Order data: ${JSON.stringify(data)}`);
   };
   
   socket.onmessage = (e: any) => {
