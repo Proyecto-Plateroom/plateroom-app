@@ -70,6 +70,29 @@ export default function Tasks() {
         }
     };
 
+    const handelDeleteTask = async (taskId: number) => {
+        if (!user) return;
+
+        try {
+            const { error } = await supabase
+                .from('tasks')
+                .delete()
+                .eq('id', taskId);
+            
+            if (error) throw error;
+            
+            // Actualizar la lista de tareas
+            const { data } = await supabase
+                .from('tasks')
+                .select('*')
+                .eq('organization_id', organization?.id);
+            
+            setTasks(data || []);
+        } catch (error) {
+            console.error("Error deleting task:", error);
+        }        
+    } 
+
     if (!isUserLoaded) {
         return <div>Cargando tareas...</div>;
     }
@@ -102,8 +125,14 @@ export default function Tasks() {
             ) : (
                 <ul className="space-y-2">
                     {tasks.map((task) => (
-                        <li key={task.id} className="p-3 bg-gray-50 rounded border">
-                            {task.name}
+                        <li key={task.id} className="p-3 bg-gray-50 rounded border flex justify-between items-center">
+                            <span>{task.name}</span>
+                            <button
+                                className="btn btn-square btn-error" 
+                                onClick={() => handelDeleteTask(task.id)}
+                            >
+                                X
+                            </button>
                         </li>
                     ))}
                     {tasks.length === 0 && <p>No hay tareas. ¡Añade una para comenzar!</p>}

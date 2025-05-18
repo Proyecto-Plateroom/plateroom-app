@@ -11,6 +11,9 @@ Deno.serve((req) => {
     return new Response("request isn't trying to upgrade to websocket.");
   }
 
+  // Please be aware query params may be logged in some logging systems.
+  const url = new URL(req.url);
+
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   socket.onopen = () => {
