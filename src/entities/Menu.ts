@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BaseModel } from "./BaseModel";
+import { DishModel } from "./Dish";
 
 // Entity for Menu
 export interface Menu {
@@ -31,6 +32,14 @@ export class MenuModel extends BaseModel<Menu> implements Menu {
     }
 
     protected tableName: string = 'menus';
+
+    async getDishes(): Promise<DishModel[]> {
+        const { data, error } = await this.rawQuery("dish_menu").select("dish: dishes(*)").eq("menu_id", this.id);
+
+        if (error) throw new Error(`Error fetching dishes: ${error.message}`);
+
+        return data.map((item) => new DishModel(this.supabase, item.dish as Partial<DishModel>)) ?? [];
+    }
 
     //
 
