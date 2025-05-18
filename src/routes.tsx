@@ -3,7 +3,7 @@ import { SignedIn, SignedOut } from '@clerk/clerk-react';
 import App from './App';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import Tasks from './pages/Tasks';
+import Test from './pages/Test/Test';
 import MenuManager from './pages/MenuManagement/MenuManager';
 
 export default function AppRoutes() {
@@ -13,7 +13,7 @@ export default function AppRoutes() {
                 <Route index element={<Home />} />
                 <Route path="/dashboard" element={ProtectedRoute({ children: <Dashboard /> })}/>
                 <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
-                <Route path="/tasks" element={ProtectedRoute({ children: <Tasks /> })} />
+                <Route path="/test" element={ProtectedRoute({ children: <Test /> })} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Route>
         </Routes>
