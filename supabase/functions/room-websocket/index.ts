@@ -124,7 +124,6 @@ Deno.serve(async (req: any) => {
   socket.onmessage = (e: any) => {
     // Send the message to all other sockets in the same room
     const data = JSON.parse(e.data);
-    broadcastMessage(order_uuid, data.text, socket);
   };
   
   // Handle connection close
@@ -139,8 +138,6 @@ Deno.serve(async (req: any) => {
         return;
       }
     }
-
-    broadcastMessage(order_uuid, `Client left the room.`);
   };
   
   // Handle errors
