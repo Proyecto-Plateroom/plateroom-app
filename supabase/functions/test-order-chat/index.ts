@@ -44,15 +44,7 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   // Check that order exists and is open
   const { data , error } = await supabase
     .from('orders')
-    .select(`
-      *,
-      menus(
-        *,
-        dishes(
-          *
-        )
-      )
-    `)
+    .select('*')
     .eq('uuid', order_uuid)
     .eq('is_open', true)
     .limit(1)
@@ -65,23 +57,17 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
     };
   }
 
-  if (!data) {
+  if (!data || data.length === 0) {
     return {
       response: new Response("Order not found or not open.", { status: 404 }),
       order: undefined
     };
   }
 
-  const order = {
-    ...data,
-    menu: data.menus,
-  }
-  delete order.menus;
-
   // If everything is ok, return the order
   return {
     response: undefined,
-    order: order
+    order: data
   };
 };
 
@@ -113,11 +99,8 @@ Deno.serve(async (req: any) => {
   
   // Handle connection open
   socket.onopen = () => {
-    // Send the order data with menu and dishes
-    socket.send(JSON.stringify({
-      type: 'order_data',
-      data: order
-    }));
+    socket.send(`Welcome to Plateroom for order ${order_uuid}.`);
+    broadcastMessage(order_uuid, `Client joined the room.`, socket);
   };
   
   // Handle incoming messages
@@ -156,7 +139,7 @@ Deno.serve(async (req: any) => {
   1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
   2. Make an HTTP request:
 
-  curl -i --location --request POST 'http://127.0.0.1:64321/functions/v1/room-websocket' \
+  curl -i --location --request POST 'http://127.0.0.1:64321/functions/v1/test-order-chat' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
     --header 'Content-Type: application/json' \
     --data '{"name":"Functions"}'
