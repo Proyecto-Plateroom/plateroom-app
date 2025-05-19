@@ -1,0 +1,71 @@
+import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
+import { useSupabaseClient } from "@/hooks/useSupabaseClient";
+import { createDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import Input from "@/utils/components/Input";
+import Loading from "@/utils/components/Loading";
+import { useOrganization } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
+
+const categoryBase: Omit<DishCategory, "organization_id"> = {
+    id: "" as unknown as number,
+    name: "",
+}
+
+export default function DishCategoryManager() {
+    const supabase = useSupabaseClient();
+    const { organization } = useOrganization();
+
+    const [categories, setCategories] = useState<DishCategoryModel[]>([]);
+    const [newCategory, setNewCategory] = useState(categoryBase);
+    const newCategoryIsValid = newCategory.name === "";
+    const handleAddNewDishField = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setNewCategory((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+    const handleAddNewDishCategory = async () => {
+        if (newCategoryIsValid) return;
+        const newCategoryItem = await createDishCategory(supabase, {...newCategory, organization_id: organization?.id});
+        setCategories((prev) => [...prev, newCategoryItem]);
+        setNewCategory(categoryBase);
+    }
+
+    const fetchCategories = async () => {
+        const fetchCategories = await getAllDishCategories(supabase);
+        setCategories(fetchCategories);
+    }
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    return (
+        <main className="main-sidebar">
+            <aside className="p-4 flex flex-col">
+                <h2>New dish category</h2>
+                <Input value={newCategory.name} label="Name" name="name" onChange={handleAddNewDishField} />
+
+                <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}>+</button>
+            </aside>
+            <article className="p-4">
+                <div>
+                    <h1>Categories</h1>
+                </div>
+                <Loading active={categories.length === 0}>
+                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 p-4">
+
+                        {categories.map((item) => (
+                            <div className="card bg-base-200">
+                                <div className="p-4 flex justify-between">
+                                    <h2>{item.name}</h2>
+                                </div>
+                            </div>
+                        ))}
+
+                    </div>
+                </Loading>
+            </article>
+        </main>
+    );
+}
