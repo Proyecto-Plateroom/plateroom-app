@@ -9,6 +9,7 @@ export interface Dish {
     supplement: number;
     photo_path: string;
     category_id: number;
+    organization_id: string;
 }
 
 export class DishModel extends BaseModel<Dish> implements Dish {
@@ -18,6 +19,7 @@ export class DishModel extends BaseModel<Dish> implements Dish {
     supplement: number;
     photo_path: string;
     category_id: number;
+    organization_id: string;
 
     constructor(supabaseClient?: SupabaseClient, init?: Partial<Dish>) {
         super(init, supabaseClient);
@@ -28,6 +30,7 @@ export class DishModel extends BaseModel<Dish> implements Dish {
         this.supplement = init?.supplement ?? 0;
         this.photo_path = init?.photo_path ?? '';
         this.category_id = init?.category_id ?? 0;
+        this.organization_id = init?.organization_id ?? '';
     }
 
     protected tableName: string = 'dishes';
