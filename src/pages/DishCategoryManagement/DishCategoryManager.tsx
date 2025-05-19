@@ -69,7 +69,7 @@ export default function DishCategoryManager() {
                     <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 p-4">
 
                         {categories.map((item) => (
-                            <div className="card bg-base-200">
+                            <div key={item.id} className="card bg-base-200">
                                 <div className="p-4 flex justify-between">
                                     <h2>{item.name}</h2>
                                     <div className="flex gap-2">
