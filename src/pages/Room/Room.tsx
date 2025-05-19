@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import type { Order } from "@/entities/Order";
 
-interface WebSocketMessage {
-    type: string;
-    data: Order;
-}
+type WebSocketMessage = 
+  | { type: 'order_data'; data: Order }
+  | { type: 'error'; data: string };
 
 export default function Room() {
     const { order_uuid } = useParams();
+    const navigate = useNavigate();
     const [order, setOrder] = useState<Order | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -33,17 +33,17 @@ export default function Room() {
     // Set up WebSocket connection
     useEffect(() => {
         if (!order_uuid) {
-            setError('No order UUID provided');
-            setIsLoading(false);
+            navigate('/404', { replace: true });
             return;
         }
 
-        // Create WebSocket connection
+        let connected = false;
         const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_uuid=${order_uuid}`;
         const ws = new WebSocket(wsUrl);
         setSocket(ws);
 
         ws.onopen = () => {
+            connected = true;
             console.log('WebSocket connection established');
         };
 
@@ -51,21 +51,29 @@ export default function Room() {
 
         ws.onerror = (error) => {
             console.error('WebSocket error:', error);
-            setError('Failed to connect to the server');
-            setIsLoading(false);
+            if (!connected) {
+                // Error during handshake
+                navigate('/404', { replace: true });
+            } else {
+                // Error after connection was established
+                setError('WebSocket connection error');
+            }
         };
 
-        ws.onclose = () => {
-            console.log('WebSocket connection closed');
+        ws.onclose = (event) => {
+            if (event.code !== 1000) { // 1000 is normal closure
+                setError(`Connection closed unexpectedly`);
+            }
+            connected = false;
         };
 
         // Clean up WebSocket on component unmount
         return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close();
-            }
+            ws.close(1000, 'Component unmounting');
         };
     }, [order_uuid, handleWebSocketMessage]);
+
+    if (!order && !error) return false;
 
     // Loading state
     if (isLoading) {

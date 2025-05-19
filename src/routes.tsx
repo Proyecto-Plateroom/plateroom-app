@@ -7,6 +7,7 @@ import Test from './pages/Test/Test';
 import MenuManager from './pages/MenuManagement/MenuManager';
 import Room from './pages/Room/Room';
 import OrderManager from './pages/OrderManager/OrderManager';
+import NotFound from './pages/NotFound/NotFound';
 
 export default function AppRoutes() {
     return (
@@ -17,9 +18,10 @@ export default function AppRoutes() {
                 <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
                 <Route path="/test" element={ProtectedRoute({ children: <Test /> })} />
                 <Route path="/order-manager" element={ProtectedRoute({ children: <OrderManager /> })} />
-                <Route path="/rooms/:order_uuid" element={<Room />} />
-                <Route path="*" element={<Navigate to="/" />} />
             </Route>
+            <Route path="/rooms/:order_uuid" element={<Room />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
     );
 }
