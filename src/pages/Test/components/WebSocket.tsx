@@ -66,7 +66,7 @@ export default function WebSocketTest() {
         }
         
         // URL de la edge function WebSocket con el ID del pedido como parámetro
-        const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_uuid=${encodeURIComponent(selectedOrderUuid)}`;
+        const wsUrl = `ws://127.0.0.1:64321/functions/v1/test-order-chat?order_uuid=${encodeURIComponent(selectedOrderUuid)}`;
         const socket = new WebSocket(wsUrl);
         
         socket.onopen = () => {
