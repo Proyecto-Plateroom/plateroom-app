@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Test from './pages/Test/Test';
 import MenuManager from './pages/MenuManagement/MenuManager';
 import Room from './pages/Room/Room';
+import OrderManager from './pages/OrderManager/OrderManager';
 
 export default function AppRoutes() {
     return (
@@ -15,6 +16,7 @@ export default function AppRoutes() {
                 <Route path="/dashboard" element={ProtectedRoute({ children: <Dashboard /> })}/>
                 <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
                 <Route path="/test" element={ProtectedRoute({ children: <Test /> })} />
+                <Route path="/order-manager" element={ProtectedRoute({ children: <OrderManager /> })} />
                 <Route path="/rooms/:order_uuid" element={<Room />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Route>
