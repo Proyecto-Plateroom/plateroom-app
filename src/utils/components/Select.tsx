@@ -22,8 +22,6 @@ export default function Select<T>({
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedId = e.target.value;
         setSelectedId(selectedId);
-        console.log("selectedId", selectedId);
-        
         const selectedItem = items.find(item => String(item[itemIdField]) === selectedId);
         if (selectedItem) itemOnSelect(selectedItem);
     };
