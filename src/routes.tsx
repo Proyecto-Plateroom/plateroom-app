@@ -10,6 +10,7 @@ import OrderManager from './pages/OrderManager/OrderManager';
 import NotFound from './pages/NotFound/NotFound';
 import DishManager from './pages/DishManagement/DishManager';
 import DishCategoryManager from './pages/DishCategoryManagement/DishCategoryManager';
+import TableManager from './pages/TableManagement/TableManager';
 
 export default function AppRoutes() {
     return (
@@ -20,6 +21,7 @@ export default function AppRoutes() {
                 <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
                 <Route path="/dish-manager" element={ProtectedRoute({ children: <DishManager/> })} />
                 <Route path="/dish-category-manager" element={ProtectedRoute({ children: <DishCategoryManager/> })} />
+                <Route path="/table-manager" element={ProtectedRoute({ children: <TableManager/> })} />
                 <Route path="/test" element={ProtectedRoute({ children: <Test /> })} />
                 <Route path="/order-manager" element={ProtectedRoute({ children: <OrderManager /> })} />
             </Route>
