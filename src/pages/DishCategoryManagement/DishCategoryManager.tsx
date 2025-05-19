@@ -1,6 +1,6 @@
 import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
-import { createDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import { createDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -27,9 +27,22 @@ export default function DishCategoryManager() {
     }
     const handleAddNewDishCategory = async () => {
         if (newCategoryIsValid) return;
-        const newCategoryItem = await createDishCategory(supabase, {...newCategory, organization_id: organization?.id});
-        setCategories((prev) => [...prev, newCategoryItem]);
+        if (newCategory.id) {
+            const newCategoryItem = await editDishCategory(supabase, {...newCategory, organization_id: organization?.id});
+            setCategories((prev) => prev.map((item) => item.id === newCategoryItem.id ? newCategoryItem : item));
+        } else {
+            const newCategoryItem = await createDishCategory(supabase, {...newCategory, organization_id: organization?.id});
+            setCategories((prev) => [...prev, newCategoryItem]);
+        }
         setNewCategory(categoryBase);
+    }    
+    const handleLoadEditDish = (item: DishCategoryModel) => {
+        if (!item) return;
+        setNewCategory((prev) => ({
+            ...prev,
+            id: item.id,
+            name: item.name
+        }));
     }
 
     const fetchCategories = async () => {
@@ -59,6 +72,9 @@ export default function DishCategoryManager() {
                             <div className="card bg-base-200">
                                 <div className="p-4 flex justify-between">
                                     <h2>{item.name}</h2>
+                                    <div className="flex gap-2">
+                                        <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDish(item)}>edit</button>
+                                    </div>
                                 </div>
                             </div>
                         ))}

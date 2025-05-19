@@ -17,3 +17,12 @@ export async function createDishCategory(supabase: SupabaseClient, category: Par
 
     return data[0];
 }
+
+export async function editDishCategory(supabase: SupabaseClient, category: Partial<DishCategory>): Promise<DishCategoryModel> {
+    const { id, ...rest } = category;
+    const { data, error } = await new DishCategoryModel(supabase).query().update(rest).eq("id", category.id).select();
+
+    if (error) throw new Error(`Error editing dish category: ${error.message}`);
+
+    return data[0];
+}
