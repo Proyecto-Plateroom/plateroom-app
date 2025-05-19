@@ -44,7 +44,15 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   // Check that order exists and is open
   const { data , error } = await supabase
     .from('orders')
-    .select('*')
+    .select(`
+      *,
+      menus(
+        *,
+        dishes(
+          *
+        )
+      )
+    `)
     .eq('uuid', order_uuid)
     .eq('is_open', true)
     .limit(1)
@@ -57,17 +65,23 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
     };
   }
 
-  if (!data || data.length === 0) {
+  if (!data) {
     return {
       response: new Response("Order not found or not open.", { status: 404 }),
       order: undefined
     };
   }
 
+  const order = {
+    ...data,
+    menu: data.menus,
+  }
+  delete order.menus;
+
   // If everything is ok, return the order
   return {
     response: undefined,
-    order: data
+    order: order
   };
 };
 
@@ -99,8 +113,11 @@ Deno.serve(async (req: any) => {
   
   // Handle connection open
   socket.onopen = () => {
-    socket.send(`Welcome to Plateroom for order ${order_uuid}.`);
-    broadcastMessage(order_uuid, `Client joined the room.`, socket);
+    // Send the order data with menu and dishes
+    socket.send(JSON.stringify({
+      type: 'order_data',
+      data: order
+    }));
   };
   
   // Handle incoming messages
