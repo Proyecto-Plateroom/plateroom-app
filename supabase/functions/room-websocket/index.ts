@@ -5,7 +5,7 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { Order, Rooms, Room } from './types.ts'
+import { Rooms, Room, InitialSetupResult } from './types.ts'
 
 // Store rooms by order_uuid
 const rooms: Rooms = {};
@@ -20,7 +20,28 @@ const supabase = createClient(
   Deno.env.get("APP_SUPABASE_SERVICE_ROLE_KEY"),
 );
 
-const fetchOrder = async (order_uuid: string): Promise<Order | Response> => {
+
+const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
+  // Check that request is a websocket upgrade
+  const upgrade = req.headers.get("upgrade") || "";
+  if (upgrade.toLowerCase() != "websocket") {
+    return { 
+      response: new Response("request isn't trying to upgrade to websocket.", { status: 400 }),
+      order: undefined
+    };
+  }
+
+  // Get order_uuid from URL and check that it exists
+  const url = new URL(req.url);
+  const order_uuid = url.searchParams.get('order_uuid');
+  if (!order_uuid) {
+    return {
+      response: new Response("Missing order_uuid", { status: 400 }),
+      order: undefined
+    };
+  }
+
+  // Check that order exists and is open
   const { data , error } = await supabase
     .from('orders')
     .select('*')
@@ -30,14 +51,24 @@ const fetchOrder = async (order_uuid: string): Promise<Order | Response> => {
     .single();
 
   if (error) {
-    return new Response("Error checking order.", { status: 400 });
+    return {
+      response: new Response("Error checking order.", { status: 500 }),
+      order: undefined
+    };
   }
 
   if (!data || data.length === 0) {
-    return new Response("Order not found or not open.", { status: 400 });
+    return {
+      response: new Response("Order not found or not open.", { status: 404 }),
+      order: undefined
+    };
   }
 
-  return data;
+  // If everything is ok, return the order
+  return {
+    response: undefined,
+    order: data
+  };
 };
 
 const broadcastMessage = (order_uuid: string, message: string, currentClient?: WebSocket) => {
@@ -49,30 +80,20 @@ const broadcastMessage = (order_uuid: string, message: string, currentClient?: W
   });
 }
 
+
 Deno.serve(async (req: any) => {
-  // Check that request is a websocket upgrade
-  const upgrade = req.headers.get("upgrade") || "";
-  if (upgrade.toLowerCase() != "websocket") {
-    return new Response("request isn't trying to upgrade to websocket.", { status: 400 });
+  const { response: initialResponse, order } = await initialSetup(req);
+  if (initialResponse) {
+    return initialResponse;
   }
-
-  // Get order_uuid from URL and check that it exists
-  const url = new URL(req.url);
-  const order_uuid = url.searchParams.get('order_uuid');
-  if (!order_uuid) {
-    return new Response("Missing order_uuid", { status: 400 });
-  }
-
-  const order = await fetchOrder(order_uuid);
-  if (order instanceof Response) {
-    return order;
-  }
+  
+  const order_uuid = order.uuid;
 
   // Upgrade request to websocket and add the socket to the corresponding room
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   if (!rooms[order_uuid]) {
-    rooms[order_uuid] = {...emptyRoom};
+    rooms[order_uuid] = { ...emptyRoom };
   }
   rooms[order_uuid].sockets.push(socket);
   

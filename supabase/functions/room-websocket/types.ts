@@ -12,7 +12,7 @@ interface RoundDishes {
   [dish_id: string]: number; // dish_id: quantity
 }
 
-interface Room {
+export interface Room {
   sockets: WebSocket[];
   current_round: RoundDishes;
 }
@@ -20,3 +20,15 @@ interface Room {
 export interface Rooms {
   [order_uuid: string]: Room;
 }
+
+type InitialSetupSuccess = {
+  response: undefined;
+  order: Order;
+};
+
+type InitialSetupError = {
+  response: Response;
+  order: undefined;
+};
+
+export type InitialSetupResult = InitialSetupSuccess | InitialSetupError;
