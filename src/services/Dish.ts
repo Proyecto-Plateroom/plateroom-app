@@ -10,7 +10,8 @@ export async function getAllDishes(supabase: SupabaseClient): Promise<DishModel[
 }
 
 export async function addDish(supabase: SupabaseClient, dish: Partial<Dish>): Promise<DishModel> {
-    const { data, error } = await new DishModel(supabase).query().insert(dish).select();
+    const { id, ...rest } = dish;
+    const { data, error } = await new DishModel(supabase).query().insert(rest).select();
 
     if (error) throw new Error(`Error adding dish: ${error.message}`);
 
