@@ -5,10 +5,15 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { Order, Round } from './interfaces.ts'
+import { Order, Rooms, Room } from './types.ts'
 
 // Store rooms by order_uuid
-const rooms: Record<string, WebSocket[]> = {};
+const rooms: Rooms = {};
+
+const emptyRoom: Room = {
+    sockets: [],
+    current_round: {},
+}
 
 const supabase = createClient(
   Deno.env.get("APP_SUPABASE_URL"),
@@ -21,7 +26,8 @@ const fetchOrder = async (order_uuid: string): Promise<Order | Response> => {
     .select('*')
     .eq('uuid', order_uuid)
     .eq('is_open', true)
-    .limit(1);
+    .limit(1)
+    .single();
 
   if (error) {
     return new Response("Error checking order.", { status: 400 });
@@ -31,12 +37,12 @@ const fetchOrder = async (order_uuid: string): Promise<Order | Response> => {
     return new Response("Order not found or not open.", { status: 400 });
   }
 
-  return data[0];
+  return data;
 };
 
 const broadcastMessage = (order_uuid: string, message: string, currentClient?: WebSocket) => {
   if (!rooms[order_uuid]) return;
-  rooms[order_uuid].forEach(client => {
+  rooms[order_uuid].sockets.forEach(client => {
     if (client !== currentClient && client.readyState === WebSocket.OPEN) {
       client.send(message);
     }
@@ -66,9 +72,9 @@ Deno.serve(async (req: any) => {
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   if (!rooms[order_uuid]) {
-    rooms[order_uuid] = [];
+    rooms[order_uuid] = {...emptyRoom};
   }
-  rooms[order_uuid].push(socket);
+  rooms[order_uuid].sockets.push(socket);
   
   // Handle connection open
   socket.onopen = () => {
@@ -87,10 +93,10 @@ Deno.serve(async (req: any) => {
   socket.onclose = () => {
     if (rooms[order_uuid]) {
       // Remove the socket from the room
-      rooms[order_uuid] = rooms[order_uuid].filter(s => s !== socket);
+      rooms[order_uuid].sockets = rooms[order_uuid].sockets.filter(s => s !== socket);
       
       // If there are no more sockets in the room, delete the room
-      if (rooms[order_uuid].length === 0) {
+      if (rooms[order_uuid].sockets.length === 0) {
         delete rooms[order_uuid];
         return;
       }
