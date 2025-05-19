@@ -29,7 +29,7 @@ export default function Select<T>({
     };
 
     return (
-        <select className="select" onChange={handleChange} value={selectedId}>
+        <select className="select w-full" onChange={handleChange} value={selectedId}>
             <option value="" disabled={true}></option>
             {items.map((item) => (
                 <option key={item[itemIdField] as string} value={item[itemIdField] as string}>

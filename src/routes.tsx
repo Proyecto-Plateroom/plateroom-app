@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Test from './pages/Test/Test';
 import MenuManager from './pages/MenuManagement/MenuManager';
+import DishManager from './pages/DishManagement/DishManager';
 
 export default function AppRoutes() {
     return (
@@ -13,6 +14,7 @@ export default function AppRoutes() {
                 <Route index element={<Home />} />
                 <Route path="/dashboard" element={ProtectedRoute({ children: <Dashboard /> })}/>
                 <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
+                <Route path="/dish-manager" element={ProtectedRoute({ children: <DishManager/> })} />
                 <Route path="/test" element={ProtectedRoute({ children: <Test /> })} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Route>
