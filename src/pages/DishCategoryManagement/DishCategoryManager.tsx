@@ -36,7 +36,7 @@ export default function DishCategoryManager() {
         }
         setNewCategory(categoryBase);
     }    
-    const handleLoadEditDish = (item: DishCategoryModel) => {
+    const handleLoadEditDishCategory = (item: DishCategoryModel) => {
         if (!item) return;
         setNewCategory((prev) => ({
             ...prev,
@@ -73,7 +73,7 @@ export default function DishCategoryManager() {
                                 <div className="p-4 flex justify-between">
                                     <h2>{item.name}</h2>
                                     <div className="flex gap-2">
-                                        <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDish(item)}>edit</button>
+                                        <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDishCategory(item)}>edit</button>
                                     </div>
                                 </div>
                             </div>
