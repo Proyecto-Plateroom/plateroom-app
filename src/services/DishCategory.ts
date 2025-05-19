@@ -26,3 +26,11 @@ export async function editDishCategory(supabase: SupabaseClient, category: Parti
 
     return data[0];
 }
+
+export async function deleteDishCategory(supabase: SupabaseClient, id: number): Promise<boolean> {
+    const { error } = await new DishCategoryModel(supabase).query().delete().eq("id", id);
+
+    if (error) throw new Error(`Error deleting dish category: ${error.message}`);
+
+    return true;
+}

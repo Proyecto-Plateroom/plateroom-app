@@ -1,6 +1,6 @@
 import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
-import { createDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import { createDishCategory, deleteDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -44,6 +44,12 @@ export default function DishCategoryManager() {
             name: item.name
         }));
     }
+    const handleDeleteDishCategory = async (item: DishCategoryModel) => {
+        if (!item) return;
+        if (await deleteDishCategory(supabase, item.id)) {
+            setCategories((prev) => prev.filter((category) => category.id !== item.id));
+        }
+    }
 
     const fetchCategories = async () => {
         const fetchCategories = await getAllDishCategories(supabase);
@@ -74,6 +80,7 @@ export default function DishCategoryManager() {
                                     <h2>{item.name}</h2>
                                     <div className="flex gap-2">
                                         <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDishCategory(item)}>edit</button>
+                                        <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteDishCategory(item)}>×</button>
                                     </div>
                                 </div>
                             </div>
