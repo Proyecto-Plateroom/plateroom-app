@@ -313,10 +313,7 @@ export default function Room() {
 
                         <SignedIn>
                             <Link to="/" className="w-1/3 flex items-center justify-center">
-                                <p>
-                                    <span className="text-base-content">Plate</span>
-                                    <span className="text-blue-400">Room</span>
-                                </p>
+                               Home
                             </Link>
                         </SignedIn>
 
