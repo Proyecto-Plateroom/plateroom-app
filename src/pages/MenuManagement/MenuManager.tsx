@@ -111,9 +111,11 @@ export default function MenuManagement() {
                                     : dishesMenu.map((dish, index) => <InfoCard key={index} item={dish} itemOnClick={() => handleDeletedishFromMenu(dish)} />)
                                 }
                                 {dishes.length !== dishesMenu.length &&
-                                    <div className="flex justify-center gap-4 col-span-3 h-min">
-                                        <Select items={dishes.filter((dish) => !dishesMenu.some((menuDish) => menuDish.id === dish.id))} itemOnSelect={(dish) => setNewDish(dish)} />
-                                        <button className="btn btn-square btn-primary" onClick={handleAddDishToMenu}>+</button>
+                                    <div className="flex justify-center col-span-full h-min">
+                                        <div className="flex items-center w-fit gap-2">
+                                            <Select items={dishes.filter((dish) => !dishesMenu.some((menuDish) => menuDish.id === dish.id))} itemOnSelect={(dish) => setNewDish(dish)} />
+                                            <button className="btn btn-square btn-primary" onClick={handleAddDishToMenu}>+</button>
+                                        </div>
                                     </div>
                                 }
                             </Loading>
