@@ -1,6 +1,47 @@
-# PlateRoom App
+# PlateRoom
 
-Aplicación web desarrollada con React, TypeScript y Vite, con autenticación mediante Clerk.
+Sistema de gestión de pedidos para restaurantes con servicio de buffet a la carta, diseñado para ofrecer una experiencia fluida tanto para clientes como para personal del restaurante.
+
+## Descripción del Proyecto
+
+PlateRoom es una solución todo-en-uno para restaurantes que ofrecen servicio de buffet a la carta, especialmente diseñada para establecimientos de sushi y cocina asiática. La plataforma permite a los clientes realizar pedidos directamente desde su mesa a través de una interfaz intuitiva, mientras que el personal de cocina recibe y gestiona los pedidos en tiempo real.
+
+**Características principales:**
+- Sistema de pedidos en tiempo real con WebSockets
+- Gestión de mesas y salas del restaurante
+- Menú digital con imágenes y descripciones detalladas
+- Panel de control para el personal de cocina
+- Autenticación y autorización segura con Clerk
+- Integración con Supabase para gestión de datos
+
+## Enlace a la Demo
+
+[Enlace a la demo](#) *(pendiente de configuración)*
+
+## Capturas de Pantalla
+
+*Sección pendiente de actualizar con capturas de la aplicación en funcionamiento.*
+
+## Integración con Clerk
+
+PlateRoom utiliza Clerk para la autenticación y gestión de usuarios, aprovechando las siguientes características:
+
+1. **Autenticación de Usuarios**
+   - Inicio de sesión con múltiples proveedores (Google, correo electrónico y username)
+   - Gestión de sesiones seguras
+
+2. **Organizaciones (SaaS Multi-tenant)**
+   - Cada restaurante opera como una organización independiente
+   - Gestión de miembros del equipo
+
+3. **Integración con Supabase RLS**
+   - Las políticas de Row Level Security (RLS) de Supabase están vinculadas a los usuarios autenticados de Clerk
+   - Restricciones de acceso basadas en la organización del usuario
+   - Seguridad a nivel de fila para garantizar el aislamiento de datos entre organizaciones
+
+## Detalles Técnicos
+
+Aplicación web desarrollada con React, TypeScript y Vite, con autenticación mediante Clerk y Supabase como BaaS.
 
 ## Características
 
