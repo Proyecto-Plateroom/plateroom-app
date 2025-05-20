@@ -210,7 +210,7 @@ export default function Room() {
         }, 5000);
 
         let connected = false;
-        const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_uuid=${order_uuid}`;
+        const wsUrl = `https://avudzafaubegzvuctfrn.supabase.co/functions/v1/room-websocket?order_uuid=${order_uuid}`;
         const ws = new WebSocket(wsUrl);
         socketRef.current = ws;
 
