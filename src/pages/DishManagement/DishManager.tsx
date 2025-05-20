@@ -26,7 +26,7 @@ export default function DishManager() {
     const [dishes, setDishes] = useState<DishModel[]>([]);
     const [categories, setCategories] = useState<DishCategoryModel[]>([]);
     const [newDish, setNewDish] = useState(dishBase);
-    const newDishIsValid = newDish.name !== "" && newDish.supplement < 0;
+    const newDishIsValid = newDish.name === "" && newDish.supplement <= 0;
     const handleAddNewDishField = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setNewDish((prev) => ({
