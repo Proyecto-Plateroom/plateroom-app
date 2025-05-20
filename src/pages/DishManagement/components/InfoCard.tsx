@@ -20,8 +20,8 @@ export default function InfoCard({
     return (
         <div className="card card-side bg-base-300 shadow-sm">
             {item.photo_path && (
-                <figure>
-                    <img src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp" alt="Movie" />
+                <figure className="w-1/3">
+                    <img src={item.photo_path} alt="Movie" />
                 </figure>
             )}
             <div className="card-body p-4">
