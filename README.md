@@ -29,7 +29,7 @@ PlateRoom es una solución todo-en-uno para restaurantes que ofrecen servicio de
 
 ## Enlace a la Demo
 
-[Enlace a la demo](#) *(pendiente de configuración)*
+[https://plateroom.arnaugra.eu/](https://plateroom.arnaugra.eu/)
 
 ## Capturas de Pantalla
 
