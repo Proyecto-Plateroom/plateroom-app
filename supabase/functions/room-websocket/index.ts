@@ -45,15 +45,26 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   const { data , error } = await supabase
     .from('orders')
     .select(`
-      *,
+      id,
+      uuid,
+      total_amount,
+      is_open,
       menus(
-        *,
+        name,
         dishes(
-          *,
+          id,
+          name,
+          description,
+          supplement,
+          photo_path,
           dish_categories(
             name
           )
         )
+      ),
+      tables(
+        name,
+        seats
       )
     `)
     .eq('uuid', order_uuid)
@@ -78,8 +89,10 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   const order = {
     ...data,
     menu: data.menus,
+    table: data.tables,
   }
   delete order.menus;
+  delete order.tables;
 
   // If everything is ok, return the order
   return {

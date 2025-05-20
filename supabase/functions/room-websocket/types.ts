@@ -5,17 +5,13 @@ export interface Dish {
   description: string | null;
   supplement: number;
   photo_path: string | null;
-  category_id: number;
   dish_categories: {
     name: string;
   };
 }
 
 export interface Menu {
-  id: number;
   name: string;
-  price: number;
-  organization_id: number | null;
   dishes: Dish[];
 }
 
@@ -24,9 +20,11 @@ export interface Order {
   uuid: string;
   total_amount: number;
   is_open: boolean;
-  menu_id: number;
-  table_id: number;
   menu: Menu;
+  table: {
+    name: string,
+    seats: number
+  };
 };
 
 interface DishQuantity {

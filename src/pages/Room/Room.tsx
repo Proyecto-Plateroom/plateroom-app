@@ -30,9 +30,13 @@ interface ExtendedDish extends Dish {
 }
 
 interface ExtendedOrder extends Order {
-  menu?: {
+  menu: {
     name: string;
     dishes: ExtendedDish[];
+  };
+  table: {
+    name: string;
+    seats: number;
   };
 }
 
@@ -322,7 +326,7 @@ export default function Room() {
                                 {order?.menu?.name || 'Order Room'}
                             </h1>
                             <p className="text-sm text-gray-500">
-                                Table: {order?.table_number || 'N/A'}
+                                Table: {order?.table.name || 'N/A'}
                             </p>
                         </div>
                         <div className="text-right">
