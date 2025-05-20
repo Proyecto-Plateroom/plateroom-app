@@ -36,7 +36,9 @@ interface ExtendedOrder extends Order {
   };
 }
 
-type CurrentRound = Record<number, number>;
+type CurrentRound = {
+    [dish_id: number]: number;
+};
 
 // Server to client messages
 type WebSocketMessage =
@@ -47,7 +49,7 @@ type WebSocketMessage =
 
 // Client to server messages
 type ClientWebSocketMessage =
-  | { type: 'update_dish'; data: { [dishId: number]: number } }  // +1 or -1 for dish quantity
+  | { type: 'update_dish'; data: CurrentRound }  // +1 or -1 for dish quantity
   | { type: 'complete_round' };  // Request to complete current round
 
 // Dish with quantity for the current round
@@ -67,7 +69,7 @@ export default function Room() {
     const [order, setOrder] = useState<ExtendedOrder | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentRound, setCurrentRound] = useState<Record<string, number>>({});
+    const [currentRound, setCurrentRound] = useState<CurrentRound>({});
     const socketRef = useRef<WebSocket | null>(null);
     const [dishesByCategory, setDishesByCategory] = useState<DishesByCategory[]>([]);
 
@@ -115,8 +117,8 @@ export default function Room() {
                     
                 case 'round_completed':
                     setCurrentRound({});
-                    // Show success message
                     setError(null);
+
                     // Reset quantities in the UI
                     setDishesByCategory(prevCategories => 
                         prevCategories.map(category => ({
@@ -127,6 +129,7 @@ export default function Room() {
                             }))
                         }))
                     );
+
                     // Show success toast
                     alert('Round completed successfully!');
                     break;
@@ -178,7 +181,6 @@ export default function Room() {
     const sendWebSocketMessage = useCallback((message: ClientWebSocketMessage) => {
         if (socketRef.current?.readyState === WebSocket.OPEN) {
             console.log('Sending message:', message);
-            
             socketRef.current.send(JSON.stringify(message));
         } else {
             console.error('WebSocket is not connected');
@@ -242,9 +244,7 @@ export default function Room() {
 
         // Clean up WebSocket on component unmount
         return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close(1000, 'Component unmounting');
-            }
+            ws.close(1000, 'Component unmounting');
         };
     }, [order_uuid, handleWebSocketMessage]);
 
