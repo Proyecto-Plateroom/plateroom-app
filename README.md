@@ -33,7 +33,7 @@ PlateRoom es una solución todo-en-uno para restaurantes que ofrecen servicio de
 
 ## Capturas de Pantalla
 
-*Sección pendiente de actualizar con capturas de la aplicación en funcionamiento.*
+![Landing Page](/readme_files/landing.png)
 ![Vista Home / Gestor de  Pedidos](/readme_files/home.png)
 ![Vista Gestor de Menús](/readme_files/menu.png)
 ![Vista Gestor de Mesas](/readme_files/mesas.png)
