@@ -203,6 +203,12 @@ export default function Room() {
             return;
         }
 
+        const pingInterval = setInterval(() => {
+            if (socketRef.current?.readyState === WebSocket.OPEN) {
+                socketRef.current.send(JSON.stringify({ type: 'ping' }));
+            }
+        }, 5000);
+
         let connected = false;
         const wsUrl = `ws://127.0.0.1:64321/functions/v1/room-websocket?order_uuid=${order_uuid}`;
         const ws = new WebSocket(wsUrl);
@@ -230,6 +236,7 @@ export default function Room() {
 
         ws.onclose = (event) => {
             if (event.code !== 1000) { // 1000 is normal closure
+                console.error('WebSocket connection closed unexpectedly', event);
                 setError(`Connection closed unexpectedly`);
             }
             connected = false;
@@ -237,6 +244,7 @@ export default function Room() {
 
         // Clean up WebSocket on component unmount
         return () => {
+            clearInterval(pingInterval);
             ws.close(1000, 'Component unmounting');
         };
     }, [order_uuid, handleWebSocketMessage]);

@@ -231,6 +231,10 @@ Deno.serve(async (req: any) => {
           }
           break;
         }
+        
+        case 'ping': {
+          break;
+        }
       }
     } catch (error) {
       console.error('Error processing message:', error);

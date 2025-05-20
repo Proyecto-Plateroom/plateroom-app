@@ -34,7 +34,8 @@ interface DishQuantity {
 // Types for WebSocket messages
 export type ClientMessage = 
   | { type: 'update_dish'; data: DishQuantity }
-  | { type: 'complete_round' };
+  | { type: 'complete_round' }
+  | { type: 'ping' };
 
 export type ServerMessage = 
   | { type: 'order_data'; data: Order }
