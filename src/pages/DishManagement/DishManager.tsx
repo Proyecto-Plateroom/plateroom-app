@@ -115,7 +115,7 @@ export default function DishManager() {
                                 return (
                                     <section key={category.id}>
                                         <h2 className="border-b">{category.name}</h2>
-                                        <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] auto-rows-[150px] gap-4 p-4">
+                                        <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] auto-rows-[150px] gap-4 pt-4">
 
                                             {dishByCategory(category.id).map((item) => (
                                                 <InfoCard item={item} key={item.id} itemEdit={() => handleLoadEditDish(item)} itemDelete={() => handleDeleteDish(item)} />

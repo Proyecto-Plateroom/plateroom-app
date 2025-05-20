@@ -75,7 +75,7 @@ export default function DishCategoryManager() {
                     <h1>Categories</h1>
                 </div>
                 <Loading active={categories.length === 0}>
-                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 p-4">
+                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 pt-4">
 
                         {categories.map((item) => (
                             <div key={item.id} className="card bg-base-200">

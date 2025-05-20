@@ -103,7 +103,7 @@ export default function MenuManagement() {
                         <button className="btn btn-error" onClick={handleDeleteMenu}>Delete Menu</button>
                     </div>
                 )}
-                <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] auto-rows-[150px] gap-4 p-4">
+                <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] auto-rows-[150px] gap-4 pt-4">
                     {!menu
                         ? <p className="italic text-gray-400">No menu selected</p>
                         : (

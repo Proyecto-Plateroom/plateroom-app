@@ -28,5 +28,5 @@ h6 {
 
 .main-sidebar {
     @apply grid grid-cols-1
-        sm:grid-cols-[1fr_3fr];
+        md:grid-cols-[1fr_3fr];
 }
