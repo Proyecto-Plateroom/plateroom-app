@@ -67,15 +67,15 @@ export default function TableManager() {
     return (
         <main className="main-sidebar">
             <aside className="p-4 flex flex-col">
-                <h2>New Table</h2>
-                <Input value={newTable.name} label="Name" name="name" onChange={handleAddNewDishField} />
-                <Input value={newTable.seats} label="Seats" name="seats" onChange={handleAddNewDishField} type="number" />
+                <h2>Nueva mesa</h2>
+                <Input value={newTable.name} label="Nombre" name="name" onChange={handleAddNewDishField} />
+                <Input value={newTable.seats} label="Sitios" name="seats" onChange={handleAddNewDishField} type="number" />
 
                 <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}>Añadir mesa<AddIcon className="w-4" stroke /></button>
             </aside>
                 <article className="p-4">
                     <div>
-                        <h1>Tables</h1>
+                        <h1>Mesas</h1>
                     </div>
                     <Loading active={tables.length === 0}>
                         <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 pt-4">
@@ -84,7 +84,7 @@ export default function TableManager() {
                                 <div key={item.id} className="card bg-base-200">
                                     <div className="p-4 ">
                                             <h2>{item.name}</h2>
-                                            <span className="text-gray-400 self-center">{item.seats} seats</span>
+                                            <span className="text-gray-400 self-center">{item.seats} Sitios</span>
                                         <div className="flex gap-2 justify-end mt-auto">
                                             <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditTable(item)}><EditIcon className="w-4" /></button>
                                             <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteTable(item)}><BinIcon className="w-4"/></button>
