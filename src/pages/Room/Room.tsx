@@ -329,7 +329,7 @@ export default function Room() {
                                         {categoryName}
                                     </div>
                                         {dishes.map((dish, index) => 
-                                            <div key={index} className={`${dishes.length-1 === index ? 'bg-gray-100' : 'bg-gray-200'}`}>
+                                            <div key={index} className={`${dishes.length-1 === index ? '' : 'border-b border-b-base-200'} hover:bg-gray-100`}>
                                                 {renderDishControls(dish)}
                                             </div>
                                         )}
