@@ -188,7 +188,7 @@ Deno.serve(async (req: any) => {
 
           try {
             // Get the last round number
-            const { data: lastRound, error: lastRoundError } = await supabase
+            const { data: lastRoundData, error: lastRoundError } = await supabase
               .from('rounds')
               .select('number')
               .eq('order_id', order.id)
@@ -196,7 +196,10 @@ Deno.serve(async (req: any) => {
               .limit(1)
               .single();
 
-            if (lastRoundError) throw lastRoundError;
+            let lastRound = { number: 0 };
+            if (!lastRoundError) {
+              lastRound = lastRoundData;
+            };
 
             // Create a new round in the database
             const { data: round, error } = await supabase
