@@ -174,13 +174,24 @@ Deno.serve(async (req: any) => {
           }
 
           try {
+            // Get the last round number
+            const { data: lastRound, error: lastRoundError } = await supabase
+              .from('rounds')
+              .select('number')
+              .eq('order_id', order.id)
+              .order('number', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (lastRoundError) throw lastRoundError;
+
             // Create a new round in the database
             const { data: round, error } = await supabase
               .from('rounds')
               .insert({
                 order_id: order.id,
-                status: 'completed',
-                dishes: room.current_round
+                number: lastRound.number + 1,
+                // dishes: room.current_round
               })
               .select()
               .single();
