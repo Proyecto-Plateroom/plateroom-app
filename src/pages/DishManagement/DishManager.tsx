@@ -103,22 +103,22 @@ export default function DishManager() {
     return (
         <main className="main-sidebar">
             <aside className="p-4 flex flex-col">
-                <h2> New dish</h2>
-                <Input value={""} label="Photo" name="photo_path" onChange={handleAddNewDishFile} type="file" optional />
-                <Input value={newDish.name} label="Name" name="name" onChange={handleAddNewDishField} />
-                <Input value={newDish.description as string} label="Description" name="description" onChange={handleAddNewDishField} optional />
+                <h2>Nuevo plato</h2>
+                <Input value={""} label="Foto" name="photo_path" onChange={handleAddNewDishFile} type="file" optional />
+                <Input value={newDish.name} label="Nombre" name="name" onChange={handleAddNewDishField} />
+                <Input value={newDish.description as string} label="Descripción" name="description" onChange={handleAddNewDishField} optional />
                 <fieldset className="fieldset">
-                    <legend className="fieldset-legend">Category</legend>
+                    <legend className="fieldset-legend">Categoría</legend>
                     <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
                 </fieldset>
-                <Input value={newDish.supplement} label="Supplement" name="supplement" onChange={handleAddNewDishField} type="number" />
+                <Input value={newDish.supplement} label="Suplemento" name="supplement" onChange={handleAddNewDishField} type="number" />
 
                 <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}>Añadir plato<AddIcon className="w-4" stroke /></button>
 
             </aside>
             <article className="p-4">
                 <div className="flex justify-between">
-                    <h1>Dishes</h1>
+                    <h1>Platos</h1>
                 </div>
                     <Loading active={dishes.length === 0}>
                         <div className="flex flex-col gap-2">
