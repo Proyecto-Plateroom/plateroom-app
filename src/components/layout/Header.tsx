@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton, OrganizationSwitcher } from '@clerk/clerk-react';
 import HamburgerIcon from '@/svg/HamburgerIcon';
+import { useRef } from 'react';
 
 export const Header = () => {
     const location = useLocation();
@@ -26,13 +27,13 @@ export const Header = () => {
 
                 <div className="hidden flex-none md:block">
                     {/* Navbar menu content */}
-                    <HeaderLinks css="menu menu-horizontal" isActive={isActive} />
+                    <HeaderLinks className="menu menu-horizontal" isActive={isActive} />
                 </div>
 
-                <div className="drawer-side">
+                <div className="drawer-side md:hidden">
                     {/* Side navbar menu content */}
                     <label htmlFor="my-drawer-3" aria-label="close sidebar" className="drawer-overlay"></label>
-                    <HeaderLinks css="menu bg-base-200 min-h-full w-80 p-4" isActive={isActive} />
+                    <HeaderLinks className="menu bg-base-200 min-h-full w-80 p-4" isActive={isActive} />
                 </div>
 
                 <div className="auth-buttons flex gap-2">
@@ -53,26 +54,51 @@ export const Header = () => {
 };
 
 interface HeaderLinkProps {
-    css: string;
+    className: string;
     isActive: (path: string) => string;
 }
 
-function HeaderLinks({ css, isActive }: HeaderLinkProps) {
-    return (
-        <ul className={css}>
-            <SignedIn>
-                <li>
-                    <Link to="/" className={`nav-link ${isActive('/')}`}>
-                        Inicio
-                    </Link>
-                </li>
-                <li>
-                    <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`}>
-                        Dashboard
-                    </Link>
-                </li>
-            </SignedIn>
+function HeaderLinks({ className, isActive }: HeaderLinkProps) {
+    const detailsRef = useRef<HTMLDetailsElement>(null);
 
-        </ul>
+    return (
+        <>
+            <SignedIn>
+                <ul className={className}>
+                    <li>
+                        <Link to="/" className={`nav-link ${isActive('/')}`}>
+                            Inicio
+                        </Link>
+                    </li>
+                    <li>
+                        <details className='relative' ref={detailsRef}>
+                            <summary>Manager</summary>
+                            <ul className="w-60 md:absolute md:top-5 md:right-0 md:bg-base-200 z-50">
+                                <li>
+                                    <Link to="/menu-manager" className={`nav-link ${isActive('/menu-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                        Menús
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/dish-manager" className={`nav-link ${isActive('/dish-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                        Platos
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/dish-category-manager" className={`nav-link ${isActive('/dish-category-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                        Categorías de platos
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/table-manager" className={`nav-link ${isActive('/table-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                        Mesas
+                                    </Link>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </SignedIn>
+        </>
     );
 }
