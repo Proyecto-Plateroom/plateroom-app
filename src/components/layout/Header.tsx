@@ -19,10 +19,11 @@ export const Header = () => {
             </div>
 
             <Link to="/" className="mr-auto">
-                <h1>
+            <img src="/plateroom_logo.png" className='h-15' alt="" />
+                {/* <h1>
                     <span className="text-base-content">Plate</span>
                     <span className="text-blue-400">Room</span>
-                </h1>
+                </h1> */}
             </Link>
 
                 <div className="hidden flex-none md:block">
