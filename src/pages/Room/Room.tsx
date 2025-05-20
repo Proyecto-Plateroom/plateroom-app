@@ -247,7 +247,7 @@ export default function Room() {
     if (isLoading) {
         return (
             <div className="p-4">
-                <p>Loading order data...</p>
+                <p>Cargando datos de la orden...</p>
             </div>
         );
     }
@@ -312,10 +312,10 @@ export default function Room() {
                         <section className="w-1/3 flex items-center justify-end">
                             <div>
                                 <p>
-                                    {totalItems} {totalItems === 1 ? 'item' : 'items'} in round
+                                    {totalItems} {totalItems === 1 ? 'item' : 'items'} esta ronda
                                 </p>
                                 <p className="text-xs text-gray-400">
-                                    {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'dish' : 'dishes'}
+                                    {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'plato' : 'platos'}
                                 </p>
                             </div>
                         </section>
@@ -337,8 +337,8 @@ export default function Room() {
                                 </div>
                             ))
                         :   <div className="text-center">
-                                <h3>No dishes available</h3>
-                                <p className="text-gray-400">The menu doesn't contain any dishes yet.</p>
+                                <h3>Sin platos disponibles</h3>
+                                <p className="text-gray-400">El menú no tiene ningún plato.</p>
                             </div>
                     }
                 </main>
@@ -347,15 +347,12 @@ export default function Room() {
                     <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
                         <div>
                             <p className="text-sm font-medium text-gray-900">
-                                {totalItems} {totalItems === 1 ? 'item' : 'items'} in current round
-                            </p>
-                            <p className="text-xs text-gray-500">
-                                Tap to review your order
+                                {totalItems} {totalItems === 1 ? 'item' : 'items'} en la ronda actual
                             </p>
                         </div>
                         <button disabled={totalItems === 0} onClick={completeRound} className="btn btn-primary btn-r">
                             <CheckIcon className="w-5" />
-                            Complete Round
+                            Pedir ronda
                         </button>
                     </div>
                 </div>
