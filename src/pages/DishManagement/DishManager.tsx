@@ -98,7 +98,7 @@ export default function DishManager() {
                 <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
                 <Input value={newDish.supplement} label="Supplement" name="supplement" onChange={handleAddNewDishField} type="number" />
 
-                <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}><AddIcon className="w-4" stroke /></button>
+                <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}>Añadir plato<AddIcon className="w-4" stroke /></button>
 
             </aside>
             <article className="p-4">
