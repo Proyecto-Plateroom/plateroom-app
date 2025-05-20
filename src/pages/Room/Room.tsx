@@ -8,6 +8,7 @@ import AddIcon from '@/svg/AddIcon';
 import ToastErrorIcon from '@/svg/ToastErrorIcon';
 import ReloadIcon from '@/svg/ReloadIcon';
 import CheckIcon from '@/svg/CheckIcon';
+import { SignedIn } from '@clerk/clerk-react';
 
 // Extended interfaces for our needs
 interface ExtendedDish extends Dish {
@@ -310,12 +311,14 @@ export default function Room() {
                             <p className="text-sm text-gray-500">Mesa: {order?.table.name || 'N/A'}</p>
                         </section>
 
-                        <Link to="/" className="w-1/3 flex items-center justify-center">
-                            <h1>
-                                <span className="text-base-content">Plate</span>
-                                <span className="text-blue-400">Room</span>
-                            </h1>
-                        </Link>
+                        <SignedIn>
+                            <Link to="/" className="w-1/3 flex items-center justify-center">
+                                <p>
+                                    <span className="text-base-content">Plate</span>
+                                    <span className="text-blue-400">Room</span>
+                                </p>
+                            </Link>
+                        </SignedIn>
 
                         <section className="w-1/3 flex items-center justify-end">
                             <div>
