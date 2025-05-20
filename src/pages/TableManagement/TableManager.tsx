@@ -71,7 +71,7 @@ export default function TableManager() {
                 <Input value={newTable.name} label="Name" name="name" onChange={handleAddNewDishField} />
                 <Input value={newTable.seats} label="Seats" name="seats" onChange={handleAddNewDishField} type="number" />
 
-                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}><AddIcon className="w-4" stroke /></button>
+                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}>Añadir mesa<AddIcon className="w-4" stroke /></button>
             </aside>
                 <article className="p-4">
                     <div>
