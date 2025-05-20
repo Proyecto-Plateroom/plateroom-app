@@ -172,9 +172,6 @@ export default function Tasks() {
     // Configurar WebSocket
     useEffect(() => {
         if (!user) return;
-
-        // Token de autenticación para la edge function
-        const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
         
         // URL de la edge function WebSocket
         const wsUrl = 'http://127.0.0.1:64321/functions/v1/room-websocket';
