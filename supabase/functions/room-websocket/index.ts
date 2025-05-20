@@ -5,15 +5,15 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import { Rooms, Room, InitialSetupResult } from './types.ts'
+import type { Rooms, Room, InitialSetupResult, ClientMessage, ServerMessage } from './types.ts'
 
 // Store rooms by order_uuid
 const rooms: Rooms = {};
 
-const emptyRoom: Room = {
+const createRoom = (): Room => ({
     sockets: [],
     current_round: {},
-}
+})
 
 const supabase = createClient(
   Deno.env.get("APP_SUPABASE_URL"),
@@ -45,12 +45,26 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   const { data , error } = await supabase
     .from('orders')
     .select(`
-      *,
+      id,
+      uuid,
+      total_amount,
+      is_open,
       menus(
-        *,
+        name,
         dishes(
-          *
+          id,
+          name,
+          description,
+          supplement,
+          photo_path,
+          dish_categories(
+            name
+          )
         )
+      ),
+      tables(
+        name,
+        seats
       )
     `)
     .eq('uuid', order_uuid)
@@ -75,8 +89,10 @@ const initialSetup = async (req: Request): Promise<InitialSetupResult> => {
   const order = {
     ...data,
     menu: data.menus,
+    table: data.tables,
   }
   delete order.menus;
+  delete order.tables;
 
   // If everything is ok, return the order
   return {
@@ -107,7 +123,7 @@ Deno.serve(async (req: any) => {
   const { socket, response } = Deno.upgradeWebSocket(req);
 
   if (!rooms[order_uuid]) {
-    rooms[order_uuid] = { ...emptyRoom };
+    rooms[order_uuid] = createRoom();
   }
   rooms[order_uuid].sockets.push(socket);
   
@@ -116,14 +132,111 @@ Deno.serve(async (req: any) => {
     // Send the order data with menu and dishes
     socket.send(JSON.stringify({
       type: 'order_data',
-      data: order
+      data: {
+        order: order,
+        current_round: rooms[order_uuid].current_round,
+      }
     }));
   };
   
   // Handle incoming messages
-  socket.onmessage = (e: any) => {
-    // Send the message to all other sockets in the same room
-    const data = JSON.parse(e.data);
+  socket.onmessage = async (e: MessageEvent) => {
+    try {
+      const message = JSON.parse(e.data) as ClientMessage;
+      const room = rooms[order_uuid];
+      
+      if (!room) {
+        console.error(`Room not found for order: ${order_uuid}`);
+        return;
+      }
+
+      switch (message.type) {
+        case 'update_dish': {
+          // Update quantities in the current round
+          Object.entries(message.data).forEach(([dishId, change]) => {
+            const dishIdNum = parseInt(dishId, 10);
+            const currentQty = room.current_round[dishIdNum] || 0;
+            const changeNum = typeof change === 'number' ? change : 0;
+            const newQty = Math.max(0, currentQty + changeNum);
+            
+            if (newQty > 0) {
+              room.current_round[dishIdNum] = newQty;
+            } else {
+              delete room.current_round[dishIdNum];
+            }
+          });
+
+          // Broadcast the updated round to all clients
+          const updateMessage: ServerMessage = {
+            type: 'update_round',
+            data: { ...room.current_round }
+          };
+          broadcastMessage(order_uuid, JSON.stringify(updateMessage));
+          break;
+        }
+
+        case 'complete_round': {
+          if (Object.keys(room.current_round).length === 0) {
+            // No dishes in the current round
+            const errorMessage: ServerMessage = {
+              type: 'error',
+              message: 'Cannot complete an empty round'
+            };
+            socket.send(JSON.stringify(errorMessage));
+            return;
+          }
+
+          try {
+            // Get the last round number
+            const { data: lastRound, error: lastRoundError } = await supabase
+              .from('rounds')
+              .select('number')
+              .eq('order_id', order.id)
+              .order('number', { ascending: false })
+              .limit(1)
+              .single();
+
+            if (lastRoundError) throw lastRoundError;
+
+            // Create a new round in the database
+            const { data: round, error } = await supabase
+              .from('rounds')
+              .insert({
+                order_id: order.id,
+                number: lastRound.number + 1,
+                // dishes: room.current_round
+              })
+              .select()
+              .single();
+
+            if (error) throw error;
+
+            // Broadcast round completion to all clients
+            const completeMessage: ServerMessage = { type: 'round_completed' };
+            broadcastMessage(order_uuid, JSON.stringify(completeMessage));
+            
+            // Reset the current round
+            room.current_round = {};
+            
+          } catch (error) {
+            console.error('Error completing round:', error);
+            const errorMessage: ServerMessage = {
+              type: 'error',
+              message: 'Failed to complete round'
+            };
+            socket.send(JSON.stringify(errorMessage));
+          }
+          break;
+        }
+      }
+    } catch (error) {
+      console.error('Error processing message:', error);
+      const errorMessage: ServerMessage = {
+        type: 'error',
+        message: 'Invalid message format'
+      };
+      socket.send(JSON.stringify(errorMessage));
+    }
   };
   
   // Handle connection close
@@ -131,12 +244,6 @@ Deno.serve(async (req: any) => {
     if (rooms[order_uuid]) {
       // Remove the socket from the room
       rooms[order_uuid].sockets = rooms[order_uuid].sockets.filter(s => s !== socket);
-      
-      // If there are no more sockets in the room, delete the room
-      if (rooms[order_uuid].sockets.length === 0) {
-        delete rooms[order_uuid];
-        return;
-      }
     }
   };
   
