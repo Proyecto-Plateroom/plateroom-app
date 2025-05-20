@@ -1,8 +1,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
+
+  # Si la solicitud no es un archivo existente
   RewriteCond %{REQUEST_FILENAME} !-f
+  # Y si la solicitud no es un directorio existente
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  # Redirige todas las demás solicitudes a index.html
+  RewriteRule ^(.*)$ /index.html [L]
 </IfModule>
