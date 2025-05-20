@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { Order } from "@/entities/Order";
 import type { Dish } from "@/entities/Dish";
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 // Simple icon components with proper TypeScript types
 const Plus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -70,9 +71,11 @@ interface DishesByCategory {
 export default function Room() {
     const { order_uuid } = useParams();
     const navigate = useNavigate();
+
     const [order, setOrder] = useState<ExtendedOrder | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    
     const [currentRound, setCurrentRound] = useState<CurrentRound>({});
     const socketRef = useRef<WebSocket | null>(null);
     const [dishesByCategory, setDishesByCategory] = useState<DishesByCategory[]>([]);
@@ -324,30 +327,32 @@ export default function Room() {
 
     // Main content
     return (
-        <div className="min-h-screen bg-gray-50 pb-24">
-            <div className="bg-white shadow-sm sticky top-0 z-10">
-                <div className="max-w-4xl mx-auto px-4 py-4">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <h1 className="text-xl font-bold text-gray-900">
-                                {order?.menu?.name || 'Order Room'}
-                            </h1>
-                            <p className="text-sm text-gray-500">
-                                Table: {order?.table.name || 'N/A'}
-                            </p>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-sm font-medium text-gray-900">
-                                {totalItems} {totalItems === 1 ? 'item' : 'items'} in round
-                            </div>
-                            <div className="text-xs text-gray-500">
-                                {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'dish' : 'dishes'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <>
+            <header className="navbar flex justify-around bg-base-300 w-full px-4">
+                <section className="w-1/3">
+                    <h2>{order?.menu?.name || 'Order Room'}</h2>
+                    <p className="text-sm text-gray-500">Mesa: {order?.table.name || 'N/A'}</p>
+                </section>
 
+                <Link to="/" className="w-1/3 flex items-center justify-center">
+                    <h1>
+                        <span className="text-base-content">Plate</span>
+                        <span className="text-blue-400">Room</span>
+                    </h1>
+                </Link>
+
+                <section className="w-1/3 flex items-center justify-end">
+                    <div>
+                        <p className="text-sm font-medium">
+                            {totalItems} {totalItems === 1 ? 'item' : 'items'} in round
+                        </p>
+                        <p className="text-xs text-gray-400">
+                            {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'dish' : 'dishes'}
+                        </p>
+                    </div>
+                </section>
+            </header>
+        <div className="min-h-screen bg-gray-50 pb-24">
             <div className="max-w-4xl mx-auto px-4 py-6">
                 {dishesByCategory.length > 0 ? (
                     <div className="space-y-6">
@@ -417,5 +422,6 @@ export default function Room() {
                 </div>
             )}
         </div>
+        </>
     );
 }
