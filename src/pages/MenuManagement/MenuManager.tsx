@@ -40,6 +40,7 @@ export default function MenuManagement() {
         const newMenuItem = await createMenu(supabase, {...newMenu, organization_id: organization?.id});
         fetchMenus();
         fetchMenu(newMenuItem);
+        setFetchingDishesMenu(false);
         setMenu(newMenuItem);
         setNewMenu(menuBase);
     }
@@ -93,7 +94,7 @@ export default function MenuManagement() {
                     <input type="text" name="name" placeholder="Menu name" className="input join-item w-2/3" value={newMenu.name} onChange={handleNewMenuChange} />
                     <input type="text" name="price" placeholder="12.5" min={0} className="input join-item w-1/3 decoration-0" value={newMenu.price ? newMenu.price : ""} onChange={handleNewMenuChange} />
                 </div>
-                <button className="btn btn-primary" disabled={!newMenu.name || !newMenu.price} onClick={handleAddNewMenu}><AddIcon className="w-4" stroke /></button>
+                <button className="btn btn-primary" disabled={!newMenu.name || !newMenu.price} onClick={handleAddNewMenu}>Añadir menú<AddIcon className="w-4" stroke /></button>
             </aside>
             <article className="p-4">
                 {menu && (
