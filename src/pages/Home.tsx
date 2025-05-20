@@ -1,8 +1,11 @@
 import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
 import OrderManager from './OrderManager/OrderManager';
+import { useEffect } from 'react';
 
 function Home() {
-    document.querySelector('main')?.classList.remove('p-4');
+    useEffect(() => {
+        document.querySelector('main')?.classList.remove('p-4');
+    }, []);
     const thingi = [
         {
             icon: '📱',
