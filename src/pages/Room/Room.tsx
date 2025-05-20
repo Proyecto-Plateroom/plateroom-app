@@ -1,27 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Order } from "@/entities/Order";
 import type { Dish } from "@/entities/Dish";
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-
-// Simple icon components with proper TypeScript types
-const Plus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-  </svg>
-);
-
-const Minus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-  </svg>
-);
-
-const Check: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg {...props} viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-  </svg>
-);
+import MinusIcon from '@/svg/MinusIcon';
+import AddIcon from '@/svg/AddIcon';
+import ToastErrorIcon from '@/svg/ToastErrorIcon';
+import ReloadIcon from '@/svg/ReloadIcon';
+import CheckIcon from '@/svg/CheckIcon';
 
 // Extended interfaces for our needs
 interface ExtendedDish extends Dish {
@@ -269,56 +255,36 @@ export default function Room() {
     // Render dish quantity controls
     const renderDishControls = (dish: DishWithQuantity) => {
         const quantity = dish.quantity || 0;
-        
         return (
-            <div key={dish.id} className="flex items-center gap-4 p-4 border-b hover:bg-gray-50 transition-colors">
-                <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-gray-100">
-                    <img 
-                        src={dish.photo_path} 
-                        alt={dish.name}
-                        className="w-full h-full object-cover"
-                    />
+            <article key={dish.id} className="flex items-center gap-4 p-4">
+                <div className='flex items-center gap-4'>
+                    {dish.photo_path && 
+                        <figure className="w-16 aspect-square rounded overflow-hidden">
+                            <img src={dish.photo_path} alt={dish.name} className="w-full h-full object-cover" />
+                        </figure>
+                    }
                 </div>
-                <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                        <h3 className="font-medium text-gray-900 truncate pr-2">{dish.name}</h3>
-                        <span className="text-sm font-medium text-gray-900 whitespace-nowrap ml-2">
-                            ${dish.supplement.toFixed(2)}
-                        </span>
+                <div className="flex justify-between w-full">
+                    <div className="flex flex-col items-start">
+                        <h3>{dish.name}</h3>
+                        {dish.description && <p className="text-sm text-gray-400 line-clamp-2">{dish.description}</p>}
                     </div>
-                    {dish.description && (
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {dish.description}
+                    {dish.supplement > 0 &&
+                        <p className=' flex items-center'>
+                            {dish.supplement.toFixed(2)}€
                         </p>
-                    )}
+                    }
                 </div>
-                <div className="flex items-center space-x-2 ml-4">
-                    <button
-                        onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation();
-                            updateDishQuantity(dish.id, -1);
-                        }}
-                        disabled={quantity <= 0}
-                        className="w-10 h-10 flex items-center justify-center p-0 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        aria-label="Decrease quantity"
-                    >
-                        <Minus className="w-4 h-4" />
+                <div className="flex items-center">
+                    <button onClick={() => updateDishQuantity(dish.id, -1)} disabled={quantity <= 0} className="btn btn-circle btn-primary">
+                        <MinusIcon className='w-4' />
                     </button>
-                    <span className="w-8 text-center text-lg font-medium">
-                        {quantity}
-                    </span>
-                    <button
-                        onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation();
-                            updateDishQuantity(dish.id, 1);
-                        }}
-                        className="w-10 h-10 flex items-center justify-center p-0 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        aria-label="Increase quantity"
-                    >
-                        <Plus className="w-4 h-4" />
+                    <span className="w-8 text-center text-lg font-medium">{quantity}</span>
+                    <button onClick={() => updateDishQuantity(dish.id, 1)} className="btn btn-circle btn-primary">
+                        <AddIcon className="w-4" />
                     </button>
                 </div>
-            </div>
+            </article>
         );
     };
 
@@ -328,100 +294,85 @@ export default function Room() {
     // Main content
     return (
         <>
-            <header className="navbar flex justify-around bg-base-300 w-full px-4">
-                <section className="w-1/3">
-                    <h2>{order?.menu?.name || 'Order Room'}</h2>
-                    <p className="text-sm text-gray-500">Mesa: {order?.table.name || 'N/A'}</p>
-                </section>
+            <div className='grid grid-cols-1 grid-rows-[auto_1fr_auto] h-screen'>
+                <header className="navbar bg-base-300 fixed top-0 left-0 right-0">
+                    <div className=' flex justify-around m-auto px-4 w-full md:w-5/6 xl:w-4/6'>
+                        <section className="w-1/3">
+                            <h2>{order?.menu?.name || 'Order Room'}</h2>
+                            <p className="text-sm text-gray-500">Mesa: {order?.table.name || 'N/A'}</p>
+                        </section>
 
-                <Link to="/" className="w-1/3 flex items-center justify-center">
-                    <h1>
-                        <span className="text-base-content">Plate</span>
-                        <span className="text-blue-400">Room</span>
-                    </h1>
-                </Link>
+                        <Link to="/" className="w-1/3 flex items-center justify-center">
+                            <h1>
+                                <span className="text-base-content">Plate</span>
+                                <span className="text-blue-400">Room</span>
+                            </h1>
+                        </Link>
 
-                <section className="w-1/3 flex items-center justify-end">
-                    <div>
-                        <p className="text-sm font-medium">
-                            {totalItems} {totalItems === 1 ? 'item' : 'items'} in round
-                        </p>
-                        <p className="text-xs text-gray-400">
-                            {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'dish' : 'dishes'}
-                        </p>
-                    </div>
-                </section>
-            </header>
-        <div className="min-h-screen bg-gray-50 pb-24">
-            <div className="max-w-4xl mx-auto px-4 py-6">
-                {dishesByCategory.length > 0 ? (
-                    <div className="space-y-6">
-                        {dishesByCategory.map(({ categoryName, dishes }) => (
-                            <div key={categoryName} className="bg-white rounded-lg shadow overflow-hidden">
-                                <div className="bg-gray-800 px-4 py-3">
-                                    <h2 className="font-semibold text-white">{categoryName}</h2>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {dishes.map(dish => renderDishControls(dish))}
-                                </div>
+                        <section className="w-1/3 flex items-center justify-end">
+                            <div>
+                                <p>
+                                    {totalItems} {totalItems === 1 ? 'item' : 'items'} in round
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                    {Object.keys(currentRound).length} {Object.keys(currentRound).length === 1 ? 'dish' : 'dishes'}
+                                </p>
                             </div>
-                        ))}
+                        </section>
                     </div>
-                ) : (
-                    <div className="text-center py-12">
-                        <div className="text-gray-400 mb-2">
-                            <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900">No dishes available</h3>
-                        <p className="mt-1 text-sm text-gray-500">The menu doesn't contain any dishes yet.</p>
-                    </div>
-                )}
-            </div>
+                </header>
+                <main className='flex flex-col gap-4 m-auto p-4 py-20 w-full md:w-5/6 xl:w-4/6'>
+                    {dishesByCategory.length > 0
+                        ?   dishesByCategory.map(({ categoryName, dishes }) => (
+                                <div key={categoryName}>
+                                    <div className="alert alert-info">
+                                        {categoryName}
+                                    </div>
+                                        {dishes.map((dish, index) => 
+                                            <div key={index} className={`${dishes.length-1 === index ? 'bg-gray-100' : 'bg-gray-200'}`}>
+                                                {renderDishControls(dish)}
+                                            </div>
+                                        )}
 
-            {/* Floating action button for completing the round */}
-            <div className={`fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 transition-transform duration-300 transform ${
-                totalItems > 0 ? 'translate-y-0' : 'translate-y-full'
-            }`}>
-                <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-                    <div>
-                        <p className="text-sm font-medium text-gray-900">
-                            {totalItems} {totalItems === 1 ? 'item' : 'items'} in current round
-                        </p>
-                        <p className="text-xs text-gray-500">
-                            Tap to review your order
-                        </p>
+                                </div>
+                            ))
+                        :   <div className="text-center">
+                                <h3>No dishes available</h3>
+                                <p className="text-gray-400">The menu doesn't contain any dishes yet.</p>
+                            </div>
+                    }
+                </main>
+                {/* Floating action button for completing the round */}
+                <div className={`fixed bottom-0 left-0 right-0 bg-base-200`}>
+                    <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+                        <div>
+                            <p className="text-sm font-medium text-gray-900">
+                                {totalItems} {totalItems === 1 ? 'item' : 'items'} in current round
+                            </p>
+                            <p className="text-xs text-gray-500">
+                                Tap to review your order
+                            </p>
+                        </div>
+                        <button disabled={totalItems === 0} onClick={completeRound} className="btn btn-primary btn-r">
+                            <CheckIcon className="w-5" />
+                            Complete Round
+                        </button>
                     </div>
-                    <button
-                        onClick={completeRound}
-                        className="flex items-center space-x-2 px-6 py-3 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                    >
-                        <Check className="w-5 h-5" />
-                        <span>Complete Round</span>
-                    </button>
                 </div>
             </div>
 
             {/* Error toast */}
             {error && (
-                <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 z-50 animate-fade-in">
-                    <svg className="w-5 h-5 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="max-w-xs">{error}</span>
-                    <button 
-                        onClick={() => setError(null)}
-                        className="ml-2 p-1 rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-white"
-                        aria-label="Cerrar"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                <div className='w-full mx-4 md:w-auto fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 z-50 animate-fade-in'>
+                    <div className="alert alert-error">
+                        <ToastErrorIcon className='w-5' />
+                        <span className="max-w-xs">{error}</span>
+                        <button onClick={() => navigate(0)} className="btn btn-sm btn-circle btn-error bg-transparent">
+                            <ReloadIcon className='w-5' />
+                        </button>
+                    </div>
                 </div>
             )}
-        </div>
         </>
     );
 }
