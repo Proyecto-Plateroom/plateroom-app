@@ -65,14 +65,14 @@ export default function DishCategoryManager() {
     return (
         <main className="main-sidebar">
             <aside className="p-4 flex flex-col">
-                <h2>New dish category</h2>
-                <Input value={newCategory.name} label="Name" name="name" onChange={handleAddNewDishField} />
+                <h2>Nueva categoría</h2>
+                <Input value={newCategory.name} label="Nombre" name="name" onChange={handleAddNewDishField} />
 
                 <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}>Añadir plato<AddIcon className="w-4" stroke /></button>
             </aside>
             <article className="p-4">
                 <div>
-                    <h1>Categories</h1>
+                    <h1>Categorías</h1>
                 </div>
                 <Loading active={categories.length === 0}>
                     <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4 pt-4">
