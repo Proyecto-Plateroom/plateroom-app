@@ -65,7 +65,7 @@ Aplicación web desarrollada con React, TypeScript y Vite, con autenticación me
 
 - Autenticación de usuarios con Clerk
 - Interfaz moderna y responsiva
-- Desarrollada con React 18 y TypeScript
+- Desarrollada con React 19 y TypeScript
 - Estructura de proyecto limpia y organizada
 
 ## Requisitos
