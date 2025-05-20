@@ -65,7 +65,7 @@ export function TableCard({ table, hasActiveOrder, activeOrderUuid, onCreateOrde
                 </button>
                 
                 {hasActiveOrder && activeOrderUuid && (
-                    <Link to={`/rooms/${activeOrderUuid}`} target='_blank' className="block w-full py-2 px-4 text-center bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700"
+                    <Link to={`/rooms/${activeOrderUuid}`} className="block w-full py-2 px-4 text-center bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700"
                     >
                         Ver Pedido
                     </Link>
