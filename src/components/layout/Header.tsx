@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, UserButton, SignInButton, OrganizationSwitcher } from '@clerk/clerk-react';
+import HamburgerIcon from '@/svg/HamburgerIcon';
 
 export const Header = () => {
     const location = useLocation();
@@ -8,11 +9,11 @@ export const Header = () => {
     };
 
     return (
-        <header className="navbar bg-base-300 w-full px-5">
+        <header className="navbar bg-base-300 w-full ">
             <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
             <div className="flex-none md:hidden">
                 <label htmlFor="my-drawer-3" aria-label="open sidebar" className="btn btn-square btn-ghost">
-                icon
+                <HamburgerIcon />
                 </label>
             </div>
 
