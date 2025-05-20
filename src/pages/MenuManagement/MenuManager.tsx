@@ -10,6 +10,7 @@ import Loading from "../../utils/components/Loading";
 import Select from "../../utils/components/Select";
 import { useOrganization } from "@clerk/clerk-react";
 import AddIcon from "@/svg/AddIcon";
+import BinIcon from "@/svg/BinIcon";
 
 const menuBase = {
     name: "",
@@ -89,9 +90,9 @@ export default function MenuManagement() {
     return (
         <main className="main-sidebar">
             <aside className="p-4 flex flex-col gap-4">
-                <List title="Menus" items={menus} itemOnClick={ (item) => fetchMenu(item) } />
+                <List title="Menús" items={menus} itemOnClick={ (item) => fetchMenu(item) } />
                 <div className="join w-full">
-                    <input type="text" name="name" placeholder="Menu name" className="input join-item w-2/3" value={newMenu.name} onChange={handleNewMenuChange} />
+                    <input type="text" name="name" placeholder="Nombre menú" className="input join-item w-2/3" value={newMenu.name} onChange={handleNewMenuChange} />
                     <input type="text" name="price" placeholder="12.5" min={0} className="input join-item w-1/3 decoration-0" value={newMenu.price ? newMenu.price : ""} onChange={handleNewMenuChange} />
                 </div>
                 <button className="btn btn-primary" disabled={!newMenu.name || !newMenu.price} onClick={handleAddNewMenu}>Añadir menú<AddIcon className="w-4" stroke /></button>
@@ -100,16 +101,16 @@ export default function MenuManagement() {
                 {menu && (
                     <div className="flex justify-between">
                         <h1>{menu?.name}</h1>
-                        <button className="btn btn-error" onClick={handleDeleteMenu}>Delete Menu</button>
+                        <button className="btn btn-error" onClick={handleDeleteMenu}>Borrar menú <BinIcon className="w-4" /></button>
                     </div>
                 )}
                 <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] auto-rows-[150px] gap-4 pt-4">
                     {!menu
-                        ? <p className="italic text-gray-400">No menu selected</p>
+                        ? <p className="italic text-gray-400">No se ha selecionado un menú</p>
                         : (
-                            <Loading active={fetchingDishesMenu} text="Loading dishes">
+                            <Loading active={fetchingDishesMenu} text="Cargando platos del menú">
                                 {dishesMenu.length === 0
-                                    ? <p className="italic text-gray-400">No dishes found</p>
+                                    ? <p className="italic text-gray-400">No se han encontrado platos</p>
                                     : dishesMenu.map((dish, index) => <InfoCard key={index} item={dish} itemOnClick={() => handleDeletedishFromMenu(dish)} />)
                                 }
                                 {dishes.length !== dishesMenu.length &&
