@@ -1,6 +1,7 @@
 import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createDishCategory, deleteDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import AddIcon from "@/svg/AddIcon";
 import BinIcon from "@/svg/BinIcon";
 import EditIcon from "@/svg/EditIcon";
 import Input from "@/utils/components/Input";
@@ -67,7 +68,7 @@ export default function DishCategoryManager() {
                 <h2>New dish category</h2>
                 <Input value={newCategory.name} label="Name" name="name" onChange={handleAddNewDishField} />
 
-                <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}>+</button>
+                <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}><AddIcon className="w-4" stroke /></button>
             </aside>
             <article className="p-4">
                 <div>

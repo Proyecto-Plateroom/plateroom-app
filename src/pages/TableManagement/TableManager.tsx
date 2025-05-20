@@ -1,6 +1,7 @@
 import type { Table, TableModel } from "@/entities/Table";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createTable, deleteTable, editTable, getAllTables } from "@/services/Table";
+import AddIcon from "@/svg/AddIcon";
 import BinIcon from "@/svg/BinIcon";
 import EditIcon from "@/svg/EditIcon";
 import Input from "@/utils/components/Input";
@@ -70,7 +71,7 @@ export default function TableManager() {
                 <Input value={newTable.name} label="Name" name="name" onChange={handleAddNewDishField} />
                 <Input value={newTable.seats} label="Seats" name="seats" onChange={handleAddNewDishField} type="number" />
 
-                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}>+</button>
+                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}><AddIcon className="w-4" stroke /></button>
             </aside>
                 <article className="p-4">
                     <div>

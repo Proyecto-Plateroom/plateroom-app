@@ -9,6 +9,7 @@ import InfoCard from "./components/InfoCard";
 import Loading from "../../utils/components/Loading";
 import Select from "../../utils/components/Select";
 import { useOrganization } from "@clerk/clerk-react";
+import AddIcon from "@/svg/AddIcon";
 
 const menuBase = {
     name: "",
@@ -92,7 +93,7 @@ export default function MenuManagement() {
                     <input type="text" name="name" placeholder="Menu name" className="input join-item w-2/3" value={newMenu.name} onChange={handleNewMenuChange} />
                     <input type="text" name="price" placeholder="12.5" min={0} className="input join-item w-1/3 decoration-0" value={newMenu.price ? newMenu.price : ""} onChange={handleNewMenuChange} />
                 </div>
-                <button className="btn btn-primary" disabled={!newMenu.name || !newMenu.price} onClick={handleAddNewMenu}>+</button>
+                <button className="btn btn-primary" disabled={!newMenu.name || !newMenu.price} onClick={handleAddNewMenu}><AddIcon className="w-4" stroke /></button>
             </aside>
             <article className="p-4">
                 {menu && (
@@ -114,7 +115,7 @@ export default function MenuManagement() {
                                     <div className="flex justify-center col-span-full h-min">
                                         <div className="flex items-center w-fit gap-2">
                                             <Select items={dishes.filter((dish) => !dishesMenu.some((menuDish) => menuDish.id === dish.id))} itemOnSelect={(dish) => setNewDish(dish)} />
-                                            <button className="btn btn-square btn-primary" onClick={handleAddDishToMenu}>+</button>
+                                            <button className="btn btn-square btn-primary" onClick={handleAddDishToMenu}><AddIcon className="w-4" stroke /></button>
                                         </div>
                                     </div>
                                 }
