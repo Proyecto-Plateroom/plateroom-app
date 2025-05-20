@@ -21,7 +21,7 @@ export default function InfoCard({
         <div className="card card-side bg-base-300 shadow-sm">
             {item.photo_path && (
                 <figure className="w-1/3">
-                    <img src={item.photo_path} alt="Movie" />
+                    <img src={item.photo_path} alt="" />
                 </figure>
             )}
             <div className="card-body p-4">
