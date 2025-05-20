@@ -268,7 +268,14 @@ export default function Room() {
         const quantity = dish.quantity || 0;
         
         return (
-            <div key={dish.id} className="flex items-center justify-between p-4 border-b hover:bg-gray-50 transition-colors">
+            <div key={dish.id} className="flex items-center gap-4 p-4 border-b hover:bg-gray-50 transition-colors">
+                <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-gray-100">
+                    <img 
+                        src={dish.photo_path} 
+                        alt={dish.name}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                         <h3 className="font-medium text-gray-900 truncate pr-2">{dish.name}</h3>
