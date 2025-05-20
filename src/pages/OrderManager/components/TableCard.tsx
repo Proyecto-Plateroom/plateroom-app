@@ -2,6 +2,7 @@ import Modal from '@/utils/components/Modal';
 import type { Table } from '../types';
 import QR from '@/utils/components/QR';
 import { useState } from 'react';
+import QRIcon from '@/svg/QRIcon';
 
 interface TableCardProps {
     table: Table;
@@ -26,7 +27,7 @@ export function TableCard({ table, hasActiveOrder, activeOrderUuid, onCreateOrde
                     {hasActiveOrder && (
                         <>
                             <button className='btn btn-ghost btn-circle' onClick={() => setQrModalOpen(true)}>
-                                QR
+                                <QRIcon className='w-5' />
                             </button>
                             <Modal open={qrModalOpen} fit onClose={() => setQrModalOpen(false)}>
                                 <div className='flex flex-col items-center'>
