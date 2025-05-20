@@ -1,6 +1,7 @@
 import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createDishCategory, deleteDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import BinIcon from "@/svg/BinIcon";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -80,7 +81,7 @@ export default function DishCategoryManager() {
                                     <h2>{item.name}</h2>
                                     <div className="flex gap-2">
                                         <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDishCategory(item)}>edit</button>
-                                        <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteDishCategory(item)}>×</button>
+                                        <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteDishCategory(item)}><BinIcon className="w-4"/></button>
                                     </div>
                                 </div>
                             </div>

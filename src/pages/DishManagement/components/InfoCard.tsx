@@ -1,3 +1,4 @@
+import BinIcon from "@/svg/BinIcon";
 import type { Dish } from "../../../entities/Dish";
 
 interface InfoCardProps {
@@ -28,7 +29,7 @@ export default function InfoCard({
                 {item.supplement > 0 && <p>Supplement: {item.supplement}</p>}
                 <div className="card-actions justify-end mt-auto">
                     <button className="btn btn-sm btn-primary btn-circle" onClick={itemEdit}>edit</button>
-                    <button className="btn btn-sm btn-error btn-circle" onClick={itemDelete}>×</button>
+                    <button className="btn btn-sm btn-error btn-circle" onClick={itemDelete}><BinIcon className="w-4"/></button>
                 </div>
             </div>
         </div>

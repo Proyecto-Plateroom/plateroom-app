@@ -1,6 +1,7 @@
 import type { Table, TableModel } from "@/entities/Table";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createTable, deleteTable, editTable, getAllTables } from "@/services/Table";
+import BinIcon from "@/svg/BinIcon";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -84,7 +85,7 @@ export default function TableManager() {
                                             <span className="text-gray-400 self-center">{item.seats} seats</span>
                                         <div className="flex gap-2 justify-end mt-auto">
                                             <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditTable(item)}>edit</button>
-                                            <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteTable(item)}>×</button>
+                                            <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteTable(item)}><BinIcon className="w-4"/></button>
                                         </div>
                                     </div>
                                 </div>
