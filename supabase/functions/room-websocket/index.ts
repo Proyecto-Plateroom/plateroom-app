@@ -220,12 +220,6 @@ Deno.serve(async (req: any) => {
     if (rooms[order_uuid]) {
       // Remove the socket from the room
       rooms[order_uuid].sockets = rooms[order_uuid].sockets.filter(s => s !== socket);
-      
-      // If there are no more sockets in the room, delete the room
-      if (rooms[order_uuid].sockets.length === 0) {
-        delete rooms[order_uuid];
-        return;
-      }
     }
   };
   

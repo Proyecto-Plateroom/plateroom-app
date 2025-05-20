@@ -31,15 +31,17 @@ interface ExtendedDish extends Dish {
 
 interface ExtendedOrder extends Order {
   menu?: {
+    name: string;
     dishes: ExtendedDish[];
   };
 }
 
-// Types for WebSocket messages
+type CurrentRound = Record<number, number>;
+
+// Server to client messages
 type WebSocketMessage =
-  // Server to client messages
-  | { type: 'order_data'; data: { order: ExtendedOrder, current_round: Record<string, number> } }  // Initial order data
-  | { type: 'update_round'; data: Record<string, number> }  // Current round dishes with quantities
+  | { type: 'order_data'; data: { order: ExtendedOrder, current_round: CurrentRound } }  // Initial order data
+  | { type: 'update_round'; data: CurrentRound }  // Current round dishes with quantities
   | { type: 'round_completed' }  // Notify clients that round was completed
   | { type: 'error'; data: string }  // Error message
 
@@ -84,14 +86,20 @@ export default function Room() {
                         setDishesByCategory(categories);
                     }
                     setCurrentRound(message.data.current_round);
+                    setDishesByCategory(prevCategories => 
+                        prevCategories.map(category => ({
+                            ...category,
+                            dishes: category.dishes.map(dish => ({
+                                ...dish,
+                                quantity: message.data.current_round[dish.id] || 0
+                            }))
+                        }))
+                    );
                     setIsLoading(false);
                     break;
                     
                 case 'update_round':
-                    setCurrentRound(prev => ({
-                        ...prev,
-                        ...message.data
-                    }));
+                    setCurrentRound(message.data);
                     
                     // Update dishes in categories with new quantities
                     setDishesByCategory(prevCategories => 
@@ -238,7 +246,7 @@ export default function Room() {
                 ws.close(1000, 'Component unmounting');
             }
         };
-    }, [order_uuid, handleWebSocketMessage, navigate]);
+    }, [order_uuid, handleWebSocketMessage]);
 
     if (!order && !error) return false;
 
@@ -322,7 +330,7 @@ export default function Room() {
                     <div className="flex justify-between items-center">
                         <div>
                             <h1 className="text-xl font-bold text-gray-900">
-                                {order?.restaurant?.name || 'Order Room'}
+                                {order?.menu?.name || 'Order Room'}
                             </h1>
                             <p className="text-sm text-gray-500">
                                 Table: {order?.table_number || 'N/A'}
