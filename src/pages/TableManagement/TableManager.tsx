@@ -1,6 +1,9 @@
 import type { Table, TableModel } from "@/entities/Table";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createTable, deleteTable, editTable, getAllTables } from "@/services/Table";
+import AddIcon from "@/svg/AddIcon";
+import BinIcon from "@/svg/BinIcon";
+import EditIcon from "@/svg/EditIcon";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -68,7 +71,7 @@ export default function TableManager() {
                 <Input value={newTable.name} label="Name" name="name" onChange={handleAddNewDishField} />
                 <Input value={newTable.seats} label="Seats" name="seats" onChange={handleAddNewDishField} type="number" />
 
-                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}>+</button>
+                <button className="btn btn-primary" disabled={newTableIsValid} onClick={handleAddNewTable}>Añadir mesa<AddIcon className="w-4" stroke /></button>
             </aside>
                 <article className="p-4">
                     <div>
@@ -83,8 +86,8 @@ export default function TableManager() {
                                             <h2>{item.name}</h2>
                                             <span className="text-gray-400 self-center">{item.seats} seats</span>
                                         <div className="flex gap-2 justify-end mt-auto">
-                                            <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditTable(item)}>edit</button>
-                                            <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteTable(item)}>×</button>
+                                            <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditTable(item)}><EditIcon className="w-4" /></button>
+                                            <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteTable(item)}><BinIcon className="w-4"/></button>
                                         </div>
                                     </div>
                                 </div>

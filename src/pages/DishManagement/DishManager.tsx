@@ -9,6 +9,7 @@ import Loading from "../../utils/components/Loading";
 import Input from "../../utils/components/Input";
 import Select from "../../utils/components/Select";
 import InfoCard from "./components/InfoCard";
+import AddIcon from "@/svg/AddIcon";
 
 const dishBase: Omit<Dish, "organization_id"> = {
     id: "" as unknown as number,
@@ -26,7 +27,7 @@ export default function DishManager() {
     const [dishes, setDishes] = useState<DishModel[]>([]);
     const [categories, setCategories] = useState<DishCategoryModel[]>([]);
     const [newDish, setNewDish] = useState(dishBase);
-    const newDishIsValid = newDish.name !== "" && newDish.supplement < 0;
+    const newDishIsValid = newDish.name === "" && newDish.supplement <= 0;
     const handleAddNewDishField = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setNewDish((prev) => ({
@@ -97,7 +98,7 @@ export default function DishManager() {
                 <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
                 <Input value={newDish.supplement} label="Supplement" name="supplement" onChange={handleAddNewDishField} type="number" />
 
-                <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}>+</button>
+                <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}>Añadir plato<AddIcon className="w-4" stroke /></button>
 
             </aside>
             <article className="p-4">

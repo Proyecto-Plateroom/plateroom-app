@@ -1,6 +1,9 @@
 import type { DishCategory, DishCategoryModel } from "@/entities/DishCategory";
 import { useSupabaseClient } from "@/hooks/useSupabaseClient";
 import { createDishCategory, deleteDishCategory, editDishCategory, getAllDishCategories } from "@/services/DishCategory";
+import AddIcon from "@/svg/AddIcon";
+import BinIcon from "@/svg/BinIcon";
+import EditIcon from "@/svg/EditIcon";
 import Input from "@/utils/components/Input";
 import Loading from "@/utils/components/Loading";
 import { useOrganization } from "@clerk/clerk-react";
@@ -65,7 +68,7 @@ export default function DishCategoryManager() {
                 <h2>New dish category</h2>
                 <Input value={newCategory.name} label="Name" name="name" onChange={handleAddNewDishField} />
 
-                <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}>+</button>
+                <button className="btn btn-primary" disabled={newCategoryIsValid} onClick={handleAddNewDishCategory}>Añadir plato<AddIcon className="w-4" stroke /></button>
             </aside>
             <article className="p-4">
                 <div>
@@ -79,8 +82,8 @@ export default function DishCategoryManager() {
                                 <div className="p-4 flex justify-between">
                                     <h2>{item.name}</h2>
                                     <div className="flex gap-2">
-                                        <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDishCategory(item)}>edit</button>
-                                        <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteDishCategory(item)}>×</button>
+                                        <button className="btn btn-sm btn-primary btn-circle" onClick={() => handleLoadEditDishCategory(item)}><EditIcon className="w-4" /></button>
+                                        <button className="btn btn-sm btn-error btn-circle" onClick={() => handleDeleteDishCategory(item)}><BinIcon className="w-4"/></button>
                                     </div>
                                 </div>
                             </div>
