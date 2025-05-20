@@ -1,14 +1,17 @@
 
-interface Dish {
+export interface Dish {
   id: number;
   name: string;
   description: string | null;
   supplement: number;
   photo_path: string | null;
   category_id: number;
+  dish_categories: {
+    name: string;
+  };
 }
 
-interface Menu {
+export interface Menu {
   id: number;
   name: string;
   price: number;
@@ -16,7 +19,7 @@ interface Menu {
   dishes: Dish[];
 }
 
-interface Order {
+export interface Order {
   id: number;
   uuid: string;
   total_amount: number;
@@ -26,13 +29,24 @@ interface Order {
   menu: Menu;
 };
 
-interface RoundDishes {
-  [dish_id: string]: number; // dish_id: quantity
+interface DishQuantity {
+  [dish_id: number]: number; // dish_id: quantity
 }
+
+// Types for WebSocket messages
+export type ClientMessage = 
+  | { type: 'update_dish'; data: DishQuantity }
+  | { type: 'complete_round' };
+
+export type ServerMessage = 
+  | { type: 'order_data'; data: Order }
+  | { type: 'update_round'; data: DishQuantity }
+  | { type: 'round_completed' }
+  | { type: 'error'; message: string };
 
 export interface Room {
   sockets: WebSocket[];
-  current_round: RoundDishes;
+  current_round: DishQuantity;
 }
 
 export interface Rooms {

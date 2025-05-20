@@ -5,7 +5,7 @@ import { BaseModel } from "./BaseModel";
 export interface Dish {
     id: number;
     name: string;
-    description: string;
+    description: string | null;
     supplement: number;
     photo_path: string;
     category_id: number;
