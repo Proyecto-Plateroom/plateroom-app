@@ -133,7 +133,7 @@ export default function Tasks() {
             const fileName = `${user.id}-${Date.now()}.${fileExt}`;
             const filePath = `${organization?.id}/dishes/${fileName}`;
 
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .storage
                 .from('plateroom-images')
                 .upload(filePath, selectedFile, {
