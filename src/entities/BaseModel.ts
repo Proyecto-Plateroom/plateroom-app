@@ -25,4 +25,23 @@ export abstract class BaseModel<T> {
     return JSON.stringify(this)
   }
 
+  async uploadFile(filePath: string, file: File | Blob) {
+    return await this.supabase
+      .storage
+      .from("plateroom-images")
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+  }
+
+  getPublicUrl(bucket: string, filePath: string): string {
+    const { data } = this.supabase
+      .storage
+      .from(bucket)
+      .getPublicUrl(filePath)
+
+    return data.publicUrl
+  }
+
 }

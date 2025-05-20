@@ -10,8 +10,9 @@ import Input from "../../utils/components/Input";
 import Select from "../../utils/components/Select";
 import InfoCard from "./components/InfoCard";
 import AddIcon from "@/svg/AddIcon";
+import { createFileName } from "@/utils/helpers";
 
-const dishBase: Omit<Dish, "organization_id"> = {
+const dishBase: Omit<Dish, "organization_id"> & { file?: File } = {
     id: "" as unknown as number,
     name: "",
     description: "",
@@ -35,6 +36,17 @@ export default function DishManager() {
             [name]: value,
         }));
     }
+    const handleAddNewDishFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        if (!files || files.length === 0) return;
+
+        const file = files[0];
+        setNewDish((prev) => ({
+            ...prev,
+            file,
+            photo_path: createFileName(organization?.id as string, file),
+        }));
+    };
     const handleAddNewDishCategory = (category: DishCategoryModel) => {
         const selectedId = String(category.id);
         const selectedItem = categories.find(item => String(item.id) === selectedId);
@@ -92,10 +104,13 @@ export default function DishManager() {
         <main className="main-sidebar">
             <aside className="p-4 flex flex-col">
                 <h2> New dish</h2>
-                <Input value={newDish.photo_path} label="Photo" name="photo_path" onChange={handleAddNewDishField} type="file" optional />
+                <Input value={""} label="Photo" name="photo_path" onChange={handleAddNewDishFile} type="file" optional />
                 <Input value={newDish.name} label="Name" name="name" onChange={handleAddNewDishField} />
                 <Input value={newDish.description as string} label="Description" name="description" onChange={handleAddNewDishField} optional />
-                <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
+                <fieldset className="fieldset">
+                    <legend className="fieldset-legend">Category</legend>
+                    <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
+                </fieldset>
                 <Input value={newDish.supplement} label="Supplement" name="supplement" onChange={handleAddNewDishField} type="number" />
 
                 <button className="btn btn-primary" disabled={newDishIsValid} onClick={handleAddNewDish}>Añadir plato<AddIcon className="w-4" stroke /></button>
