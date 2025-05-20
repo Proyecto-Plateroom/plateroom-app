@@ -1,5 +1,18 @@
 # PlateRoom
 
+> **Nota importante sobre el estado actual:**
+> - Hemos identificado problemas con la sincronización en tiempo real entre múltiples clientes debido a limitaciones técnicas con WebSockets en el entorno de producción.
+> - La aplicación funciona correctamente en modo individual: puedes añadir platos y completar rondas sin problemas.
+> - Es posible que aparezcan mensajes de error de conexión después de períodos de inactividad.
+>
+> **Estado del desarrollo:**
+> - Esta es una versión en desarrollo activo.
+> - Funcionalidades pendientes de implementar:
+>   - Revisión de rondas anteriores
+>   - Cierre de pedidos desde el panel de administración
+>   - Sincronización en tiempo real entre múltiples clientes
+>   - Y muchas más mejoras planeadas
+
 Sistema de gestión de pedidos para restaurantes con servicio de buffet a la carta, diseñado para ofrecer una experiencia fluida tanto para clientes como para personal del restaurante.
 
 ## Descripción del Proyecto
