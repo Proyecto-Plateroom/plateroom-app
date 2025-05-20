@@ -14,18 +14,25 @@ import TableManager from './pages/TableManagement/TableManager';
 export default function AppRoutes() {
     return (
         <Routes>
-            <Route path="/" element={<App />}>
-                <Route index element={<Home />} />
-                {/* <Route path="/dashboard" element={ProtectedRoute({ children: <OrderManager /> })}/> */}
-                <Route path="/menu-manager" element={ProtectedRoute({ children: <MenuManager/> })} />
-                <Route path="/dish-manager" element={ProtectedRoute({ children: <DishManager/> })} />
-                <Route path="/dish-category-manager" element={ProtectedRoute({ children: <DishCategoryManager/> })} />
-                <Route path="/table-manager" element={ProtectedRoute({ children: <TableManager/> })} />
-                {/* <Route path="/test" element={ProtectedRoute({ children: <Test /> })} /> */}
+            <Route path="/" >
+
+                <Route path="/" element={<App />} >
+                    <Route index element={<Home />} />
+                </Route>
+
+                <Route path="/manager" element={<App />} >
+                    {/* <Route path="/dashboard" element={ProtectedRoute({ children: <OrderManager /> })}/> */}
+                    <Route path="/manager/menu" element={ProtectedRoute({ children: <MenuManager/> })} />
+                    <Route path="/manager/dish" element={ProtectedRoute({ children: <DishManager/> })} />
+                    <Route path="/manager/dish-category" element={ProtectedRoute({ children: <DishCategoryManager/> })} />
+                    <Route path="/manager/table" element={ProtectedRoute({ children: <TableManager/> })} />
+                    {/* <Route path="/test" element={ProtectedRoute({ children: <Test /> })} /> */}
+                </Route>
+
+                <Route path="/rooms/:order_uuid" element={<Room />} />
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
             </Route>
-            <Route path="/rooms/:order_uuid" element={<Room />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
     );
 }

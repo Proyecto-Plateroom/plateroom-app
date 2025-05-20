@@ -75,22 +75,22 @@ function HeaderLinks({ className, isActive }: HeaderLinkProps) {
                             <summary>Manager</summary>
                             <ul className="w-60 md:absolute md:top-5 md:right-0 md:bg-base-200 z-50">
                                 <li>
-                                    <Link to="/menu-manager" className={`nav-link ${isActive('/menu-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                    <Link to="/manager/menu" className={`nav-link ${isActive('/menu')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
                                         Menús
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/dish-manager" className={`nav-link ${isActive('/dish-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                    <Link to="/manager/dish" className={`nav-link ${isActive('/dish')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
                                         Platos
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/dish-category-manager" className={`nav-link ${isActive('/dish-category-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                    <Link to="/manager/dish-category" className={`nav-link ${isActive('/dish-category')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
                                         Categorías de platos
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/table-manager" className={`nav-link ${isActive('/table-manager')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
+                                    <Link to="/manager/table" className={`nav-link ${isActive('/table')}`} onClick={() => detailsRef.current?.removeAttribute('open')}>
                                         Mesas
                                     </Link>
                                 </li>
