@@ -1,12 +1,12 @@
 import { SignedIn, SignedOut } from '@clerk/clerk-react';
+import OrderManager from './OrderManager/OrderManager';
 
 function Home() {
     return (
         <div className="home">
             <div className="home-content">
                 <SignedIn>
-                    <h2>¡Bienvenido a PlateRoom!</h2>
-                    <p>Has iniciado sesión correctamente. Navega al dashboard para comenzar.</p>
+                    <OrderManager />
                 </SignedIn>
                 <SignedOut>
                     <h2>Bienvenido a PlateRoom</h2>
