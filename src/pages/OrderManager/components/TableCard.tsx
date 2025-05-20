@@ -1,4 +1,7 @@
+import Modal from '@/utils/components/Modal';
 import type { Table } from '../types';
+import QR from '@/utils/components/QR';
+import { useState } from 'react';
 
 interface TableCardProps {
     table: Table;
@@ -8,6 +11,8 @@ interface TableCardProps {
 }
 
 export function TableCard({ table, hasActiveOrder, activeOrderUuid, onCreateOrder }: TableCardProps) {
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+
     return (
         <div className={`border rounded-lg p-4 ${hasActiveOrder ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`}>
             <div className="flex justify-between items-start">
@@ -17,13 +22,31 @@ export function TableCard({ table, hasActiveOrder, activeOrderUuid, onCreateOrde
                         {hasActiveOrder ? 'Pedido activo' : 'Libre'}
                     </p>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    hasActiveOrder 
-                        ? 'bg-red-100 text-red-800' 
-                        : 'bg-green-100 text-green-800'
-                }`}>
-                    {hasActiveOrder ? 'Ocupada' : 'Libre'}
-                </span>
+                <div>
+                    {hasActiveOrder && (
+                        <>
+                            <button className='btn btn-ghost btn-circle' onClick={() => setQrModalOpen(true)}>
+                                QR
+                            </button>
+                            <Modal open={qrModalOpen} fit onClose={() => setQrModalOpen(false)}>
+                                <div className='flex flex-col items-center'>
+                                    <QR url={`${import.meta.env.VITE_APP_URL}/rooms/${activeOrderUuid}`} />
+                                    <p className="text-center text-sm text-gray-600 mt-2">
+                                        Escanea el código QR para acceder al pedido.
+                                    </p>
+                                </div>
+                            </Modal>
+                        </>
+                    )}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        hasActiveOrder 
+                            ? 'bg-red-100 text-red-800' 
+                            : 'bg-green-100 text-green-800'
+                    }`}>
+                        {hasActiveOrder ? 'Ocupada' : 'Libre'}
+                    </span>
+                    
+                </div>
             </div>
             
             <div className="mt-4 space-y-2">
