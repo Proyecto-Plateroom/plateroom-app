@@ -3,6 +3,7 @@ import type { Table } from '../types';
 import QR from '@/utils/components/QR';
 import { useState } from 'react';
 import QRIcon from '@/svg/QRIcon';
+import { Link } from 'react-router-dom';
 
 interface TableCardProps {
     table: Table;
@@ -64,14 +65,10 @@ export function TableCard({ table, hasActiveOrder, activeOrderUuid, onCreateOrde
                 </button>
                 
                 {hasActiveOrder && activeOrderUuid && (
-                    <a
-                        href={`/rooms/${activeOrderUuid}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full py-2 px-4 text-center bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700"
+                    <Link to={`/rooms/${activeOrderUuid}`} target='_blank' className="block w-full py-2 px-4 text-center bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700"
                     >
                         Ver Pedido
-                    </a>
+                    </Link>
                 )}
             </div>
         </div>
