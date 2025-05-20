@@ -94,7 +94,7 @@ export default function DishManager() {
                 <h2> New dish</h2>
                 <Input value={newDish.photo_path} label="Photo" name="photo_path" onChange={handleAddNewDishField} type="file" optional />
                 <Input value={newDish.name} label="Name" name="name" onChange={handleAddNewDishField} />
-                <Input value={newDish.description} label="Description" name="description" onChange={handleAddNewDishField} optional />
+                <Input value={newDish.description as string} label="Description" name="description" onChange={handleAddNewDishField} optional />
                 <Select items={categories} itemOnSelect={handleAddNewDishCategory} />
                 <Input value={newDish.supplement} label="Supplement" name="supplement" onChange={handleAddNewDishField} type="number" />
 
